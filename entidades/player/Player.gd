@@ -35,6 +35,9 @@ func input():
 	if Input.is_action_just_pressed("up") and is_on_floor():
 		movement.y = -JUMP
 	
+	if Input.is_action_just_released("up") and not is_on_floor():
+		movement.y *= inertia - 0.1
+	
 	##Gravidade:
 	movement.y += GRAVITY
 	
@@ -42,13 +45,19 @@ func input():
 	movement.x = clamp(movement.x,-MAX_SPEED,MAX_SPEED)
 	
 	##Faz com que a própria velocidade seja multiplicada pela inercia (para deslizar)
+	#Se ele estiver no chão apenas multiplique movimentação com a inercia sem alteração
+	#Caso contrário multiplique por 1
+	if is_on_floor():
+		movement.x *= inertia
+	else:
+		movement.x *= 0.99
 	
 	#Se ele estiver no chão apenas multiplique movimentação com a inercia sem alteração
 	#Caso contrário multiplique por 1
 	if is_on_floor():
 		movement.x *= inertia
 	else:
-		movement.x *= 1.0
+		movement.x *= 0.99
 	##Aplica os movimentos do vetorial ao corpo do nó:
 	movement = move_and_slide(movement, Vector2.UP)
 	
