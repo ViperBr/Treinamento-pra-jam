@@ -21,7 +21,7 @@ _global_script_class_icons={
 [application]
 
 config/name="projeto-jogo-jam"
-run/main_scene="res://fases/Main_teste.tscn"
+run/main_scene="res://fases/Main.tscn"
 config/icon="res://icon.png"
 
 [gdnative]
