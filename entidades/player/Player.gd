@@ -4,7 +4,7 @@ extends KinematicBody2D
 var hp = 100
 var damage = 25
 var movement:Vector2
-var inertia:float = 0.9
+var inertia:float = 0.7
 const SPEED = 50
 const MAX_SPEED = 400
 const JUMP = 500
