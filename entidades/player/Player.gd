@@ -4,7 +4,7 @@ extends KinematicBody2D
 var hp = 100
 var damage = 25
 var movement:Vector2
-var inertia:float = 0.7
+var inertia:float = 0.9
 const SPEED = 50
 const MAX_SPEED = 400
 const JUMP = 500
@@ -34,13 +34,6 @@ func input():
 	#Caso esteja no chão e pressione para cima, pule.
 	if Input.is_action_just_pressed("up") and is_on_floor():
 		movement.y = -JUMP
-		
-	#Se ele estiver no chão apenas multiplique movimentação com a inercia sem alteração
-	#Caso contrário multiplique por 1
-	if is_on_floor():
-		movement.x *= inertia
-	else:
-		movement.x *= 1.0
 	
 	##Gravidade:
 	movement.y += GRAVITY
