@@ -5,7 +5,7 @@ var hp = 100
 var damage = 25
 var movement:Vector2
 var inertia:float = 0.9
-const SPEED = 50
+const SPEED = 30
 const MAX_SPEED = 400
 const JUMP = 500
 const GRAVITY = 10
@@ -45,19 +45,11 @@ func input():
 	movement.x = clamp(movement.x,-MAX_SPEED,MAX_SPEED)
 	
 	##Faz com que a própria velocidade seja multiplicada pela inercia (para deslizar)
-	#Se ele estiver no chão apenas multiplique movimentação com a inercia sem alteração
-	#Caso contrário multiplique por 1
 	if is_on_floor():
 		movement.x *= inertia
 	else:
-		movement.x *= 0.99
-	
-	#Se ele estiver no chão apenas multiplique movimentação com a inercia sem alteração
-	#Caso contrário multiplique por 1
-	if is_on_floor():
-		movement.x *= inertia
-	else:
-		movement.x *= 0.99
+		movement.x *= 1.0
+		
 	##Aplica os movimentos do vetorial ao corpo do nó:
 	movement = move_and_slide(movement, Vector2.UP)
 	
