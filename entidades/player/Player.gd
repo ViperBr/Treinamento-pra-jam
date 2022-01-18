@@ -4,13 +4,13 @@ extends KinematicBody2D
 var hp = 100
 var damage = 25
 var movement:Vector2
-var inertia:float = 0.5
+var inertia:float = 0.9
 const SPEED = 50
-const MAX_SPEED = 100
-const JUMP = 100
+const MAX_SPEED = 400
+const JUMP = 500
 const GRAVITY = 10
 
-
+##Chamado quando o jogador pressiona tecla de atacar
 func attack():
 	pass
 
@@ -32,8 +32,8 @@ func input():
 		movement.x += SPEED
 		
 	#Caso esteja no chão e pressione para cima, pule.
-	if Input.is_action_pressed("up") and is_on_floor():
-		movement.y -= JUMP
+	if Input.is_action_just_pressed("up") and is_on_floor():
+		movement.y = -JUMP
 	
 	##Gravidade:
 	movement.y += GRAVITY
@@ -42,10 +42,15 @@ func input():
 	movement.x = clamp(movement.x,-MAX_SPEED,MAX_SPEED)
 	
 	##Faz com que a própria velocidade seja multiplicada pela inercia (para deslizar)
-	movement.x *= inertia
 	
+	#Se ele estiver no chão apenas multiplique movimentação com a inercia sem alteração
+	#Caso contrário multiplique por 1
+	if is_on_floor():
+		movement.x *= inertia
+	else:
+		movement.x *= 1.0
 	##Aplica os movimentos do vetorial ao corpo do nó:
-	movement = move_and_slide(movement)
+	movement = move_and_slide(movement, Vector2.UP)
 	
 func _ready():
 	pass
