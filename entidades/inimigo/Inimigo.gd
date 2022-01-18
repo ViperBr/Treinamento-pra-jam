@@ -22,15 +22,15 @@ func dead():
 
 func _ready():
 	direction = -1;
-	$FloorDetector.position.x = $CollisionShape2D.shape.get_extents().x * direction;
+	$FloorDetector.position.x = $CollisionShape2D.shape.get_extents().x * direction; #definindo a direção do raycast
 	pass
 
 func _process(delta):
-	if is_on_wall() or not $FloorDetector.is_colliding(): 
+	if is_on_wall() or not $FloorDetector.is_colliding(): #validando se ele n está colidindo com alguma parede ou se vai cair do chao
 		direction = direction * -1
-		$FloorDetector.position.x = $CollisionShape2D.shape.get_extents().x * direction;
+		$FloorDetector.position.x = $CollisionShape2D.shape.get_extents().x * direction; #definindo a direção do raycast
 	
 	pos.y += GRV  #gravidade agindo no inimigo.
 	pos = move_and_slide(pos,Vector2.UP) #movendo o inimigo
-	pos.x = SPD * direction
+	pos.x = SPD * direction #indicando a posição do inimigo
 	pass
