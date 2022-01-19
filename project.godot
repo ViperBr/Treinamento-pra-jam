@@ -56,6 +56,10 @@ down={
  ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="Chão"
+
 [physics]
 
 common/enable_pause_aware_picking=true
