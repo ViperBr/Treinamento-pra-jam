@@ -32,4 +32,6 @@ points = PoolVector2Array( 0, 0, 64, 0, 64, 64, 0, 64 )
 modulate = Color( 0, 0, 0, 1 )
 tile_set = SubResource( 2 )
 cell_custom_transform = Transform2D( 32, 0, 0, 32, 0, 0 )
+collision_layer = 15
+collision_mask = 15
 format = 1

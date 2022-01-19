@@ -13,6 +13,7 @@ var pos = Vector2(0,position.y);
 onready var player = get_node("/root/Main/Player");
 
 func attack():
+	direction = 0;
 	$AnimatedSprite.play("attack")
 	pass
 	
@@ -37,7 +38,7 @@ func _process(delta):
 		direction = -1;
 		$AnimatedSprite.flip_h = true;
 		$AnimatedSprite.play('walk')
-	elif player.position.x - self.position.x <-500 or player.position.x - self.position.x > 500:
+	elif player and (player.position.x - self.position.x <-500 or player.position.x - self.position.x > 500):
 		direction = 0;
 		$AnimatedSprite.play('idle');
 	else:
