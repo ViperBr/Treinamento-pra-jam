@@ -21,6 +21,14 @@ func receive_damage():
 ##Chamado quando o jogador morre
 func dead():
 	pass
+##Chamada quando o player encosta em um coletável de vida
+func life_increase(increase):
+	# verifica se o hp suporta a incrementação da vida
+	if hp + increase > 100:
+		hp = 100;
+	else:
+		hp += increase;
+	pass
 
 ##Tudo relacionado aos controles e movimentação do jogador
 func input():
