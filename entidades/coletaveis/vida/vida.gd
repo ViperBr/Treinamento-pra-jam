@@ -1,13 +1,18 @@
 extends KinematicBody2D
 const grv = 30;
 var life_to_increase = 50
-onready var player = get_node("/root/Main/Player");
+onready var player
 var phy = Vector2(0,grv)
 
 func give_life():
 	queue_free()
 
+func _ready():
+	for p in get_tree().get_nodes_in_group("player"):
+		player = p
+		
 func _process(delta):
+	
 	if not is_on_floor(): 
 		phy.y += grv;
 	if player:
@@ -18,4 +23,3 @@ func _process(delta):
 				give_life()
 	
 	phy = move_and_slide(phy, Vector2.UP);
-	pass

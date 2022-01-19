@@ -10,12 +10,15 @@ var direction = -1
 var initialpos = self.position
 var pos = Vector2(0,position.y);
 
-onready var player = get_node("/root/Main/Player");
+onready var player
 
 func attack():
 	direction = 0;
 	$AnimatedSprite.play("attack")
-	pass
+	for p in get_tree().get_nodes_in_group("player"):
+		player = p
+
+	
 	
 func receive_damage():
 	pass
@@ -29,6 +32,9 @@ func _ready():
 	pass
 
 func _process(delta):
+	
+	for p in get_tree().get_nodes_in_group("players"):
+		player = p
 	
 	if player and player.position.x - self.position.x < 500 and player.position.x - self.position.x > 100: 
 		direction = 1;
