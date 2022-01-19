@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/attack.png-16d296c8249ebab63f107c8d9099c2bc.stex"
+path="res://.import/dead.png-99801bad2b6b9efda77c633af92da211.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/minions/warrior/attack.png"
-dest_files=[ "res://.import/attack.png-16d296c8249ebab63f107c8d9099c2bc.stex" ]
+source_file="res://sprites/minions/archer/dead.png"
+dest_files=[ "res://.import/dead.png-99801bad2b6b9efda77c633af92da211.stex" ]
 
 [params]
 
