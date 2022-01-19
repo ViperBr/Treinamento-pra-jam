@@ -29,8 +29,6 @@ func _ready():
 	for p in get_tree().get_nodes_in_group("player"):
 		player = p
 
-	
-
 
 func _process(delta):
 	

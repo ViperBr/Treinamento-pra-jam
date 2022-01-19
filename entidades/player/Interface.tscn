@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://entidades/player/Interface.gd" type="Script" id=1]
+
+[node name="Interface" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="vida" type="Label" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = -117.0
+margin_right = 105.0
+margin_bottom = -103.0
+text = "Vida:"
+
+[node name="stamina" type="Label" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = -83.0
+margin_right = 105.0
+margin_bottom = -69.0
+text = "Stamina:"

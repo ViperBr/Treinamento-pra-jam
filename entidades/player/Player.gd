@@ -3,6 +3,7 @@ extends KinematicBody2D
 #Definindo variáveis principais e atributos
 var hp = 100
 var damage = 25
+var stamina = 100
 var movement:Vector2
 var inertia:float = 0.9
 var dead := false
@@ -11,7 +12,8 @@ const MAX_SPEED = 200
 const JUMP = 400
 const GRAVITY = 10
 
-
+##Referenciando nós
+onready var interface = get_node("")
 
 
 ##Chamado quando o jogador pressiona tecla de atacar
@@ -25,6 +27,14 @@ func receive_damage():
 ##Chamado quando o jogador morre
 func dead():
 	pass
+
+
+##Chamado quando o jogador encosta em um coletável de stamina
+func stamina_increase(increase):
+	if stamina + increase > 100:
+		stamina = 100
+	else:
+		stamina += increase
 	
 ##Chamada quando o player encosta em um coletável de vida
 func life_increase(increase):
@@ -66,6 +76,8 @@ func input():
 	##Aplica os movimentos do vetorial ao corpo do nó:
 	movement = move_and_slide(movement, Vector2.UP)
 	
+func conectar_HUD():
+	pass
 func _ready():
 	pass
 

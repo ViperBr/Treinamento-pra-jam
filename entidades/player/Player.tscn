@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://entidades/player/Player.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://entidades/player/Interface.tscn" type="PackedScene" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 9.5, 30 )
@@ -22,3 +23,7 @@ shape = SubResource( 1 )
 current = true
 smoothing_enabled = true
 smoothing_speed = 15.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Interface" parent="CanvasLayer" instance=ExtResource( 3 )]
