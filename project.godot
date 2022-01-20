@@ -80,6 +80,7 @@ attack={
 2d_physics/layer_1="Chão"
 2d_physics/layer_5="Jogador"
 2d_physics/layer_6="Chão"
+2d_physics/layer_7="Flecha"
 
 [physics]
 

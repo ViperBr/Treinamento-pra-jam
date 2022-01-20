@@ -8,7 +8,7 @@
 extents = Vector2( 30, 30 )
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 40, 10 )
+extents = Vector2( 34.25, 19.5 )
 
 [node name="Player" type="KinematicBody2D" groups=["player"]]
 collision_layer = 16
@@ -34,11 +34,14 @@ smoothing_speed = 15.0
 [node name="Interface" parent="CanvasLayer" instance=ExtResource( 3 )]
 
 [node name="distancia_de_hit" type="Area2D" parent="."]
-collision_mask = 14
+collision_layer = 0
+collision_mask = 78
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="distancia_de_hit"]
-position = Vector2( 39, 0 )
+position = Vector2( 51.75, -0.5 )
 shape = SubResource( 2 )
 
+[connection signal="area_exited" from="distancia_de_hit" to="." method="_on_distancia_de_hit_area_exited"]
+[connection signal="area_shape_entered" from="distancia_de_hit" to="." method="_on_distancia_de_hit_area_shape_entered"]
 [connection signal="body_entered" from="distancia_de_hit" to="." method="_on_distancia_de_hit_body_entered"]
 [connection signal="body_exited" from="distancia_de_hit" to="." method="_on_distancia_de_hit_body_exited"]
