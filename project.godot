@@ -77,6 +77,7 @@ attack={
 
 [layer_names]
 
+2d_physics/layer_1="Chão"
 2d_physics/layer_5="Jogador"
 2d_physics/layer_6="Chão"
 
