@@ -154,7 +154,7 @@ func _physics_process(delta):
 	input()
 	conectar_HUD()
 	
-	print(stamina_timer.time_left)
+	#print(stamina_timer.time_left)
 	
 ##Se o inimigo entrou na área, seu alvo agora é esse
 func _on_distancia_de_hit_body_entered(body):

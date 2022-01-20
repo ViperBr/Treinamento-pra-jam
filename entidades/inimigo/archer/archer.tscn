@@ -91,7 +91,7 @@ animations = [ {
 "speed": 1.0
 }, {
 "frames": [ SubResource( 15 ), SubResource( 16 ), SubResource( 17 ), SubResource( 18 ), SubResource( 19 ) ],
-"loop": true,
+"loop": false,
 "name": "dead",
 "speed": 5.0
 }, {
@@ -117,7 +117,6 @@ position = Vector2( -0.499999, -0.500001 )
 scale = Vector2( 1.96875, 2.03125 )
 frames = SubResource( 20 )
 animation = "idle"
-frame = 3
 speed_scale = 3.0
 playing = true
 
