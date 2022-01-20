@@ -11,6 +11,7 @@ extents = Vector2( 9.5, 30 )
 extents = Vector2( 40, 10 )
 
 [node name="Player" type="KinematicBody2D" groups=["player"]]
+collision_layer = 16
 collision_mask = 0
 script = ExtResource( 1 )
 
@@ -39,4 +40,5 @@ collision_mask = 14
 position = Vector2( 39, 0 )
 shape = SubResource( 2 )
 
-[connection signal="body_entered" from="distancia_de_hit" to="." method="objeto_colidiu_com_area2d"]
+[connection signal="body_entered" from="distancia_de_hit" to="." method="_on_distancia_de_hit_body_entered"]
+[connection signal="body_exited" from="distancia_de_hit" to="." method="_on_distancia_de_hit_body_exited"]

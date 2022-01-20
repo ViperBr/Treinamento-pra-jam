@@ -11,7 +11,9 @@ var initialpos = self.position
 var pos = Vector2(0,position.y);
 
 onready var player
-var timer = 0
+onready var timer = 0
+onready var dead: = false
+
 
 func attack():
 	direction = 0;
@@ -23,11 +25,17 @@ func attack():
 		timer = 0
 	
 func receive_damage(damage):
-	print("fui atacado:" + str(damage) + "de dano")
+	if hp - damage <= 0:
+		dead()
+	else:
+		hp -= damage
+		print("minha vida:" + str(hp) + "recebi dano:" + self.name)
 
 func dead():
-	pass
-
+	print("morri:" + self.name)
+	dead = true
+	
+	
 func _ready():
 	direction = 0;
 	$AnimatedSprite.flip_h = !$AnimatedSprite.flip_h;
@@ -36,19 +44,20 @@ func _ready():
 
 func _process(delta):
 	
-	if player and player.position.x - self.position.x < 500 and player.position.x - self.position.x > 70: 
-		direction = 1;
-		$AnimatedSprite.flip_h = false;
-		$AnimatedSprite.play('walk')		
-	elif player and player.position.x - self.position.x >-500 and player.position.x - self.position.x < -70:
-		direction = -1;
-		$AnimatedSprite.flip_h = true;
-		$AnimatedSprite.play('walk')
-	elif player and (player.position.x - self.position.x <-500 or player.position.x - self.position.x > 500):
-		direction = 0;
-		$AnimatedSprite.play('idle');
-	else:
-		attack();
+	if not dead:
+		if player and player.position.x - self.position.x < 500 and player.position.x - self.position.x > 70: 
+			direction = 1;
+			$AnimatedSprite.flip_h = false;
+			$AnimatedSprite.play('walk')		
+		elif player and player.position.x - self.position.x >-500 and player.position.x - self.position.x < -70:
+			direction = -1;
+			$AnimatedSprite.flip_h = true;
+			$AnimatedSprite.play('walk')
+		elif player and (player.position.x - self.position.x <-500 or player.position.x - self.position.x > 500):
+			direction = 0;
+			$AnimatedSprite.play('idle');
+		else:
+			attack();
 	
 	pos.y += GRV  #gravidade agindo no inimigo.
 	pos = move_and_slide(pos,Vector2.UP) #movendo o inimigo

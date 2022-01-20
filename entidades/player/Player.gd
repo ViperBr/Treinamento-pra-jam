@@ -1,12 +1,8 @@
 extends KinematicBody2D
 
-##Sinais
-signal inimigo_dentro_do_colisor(body)
-
-
 #Definindo variáveis principais e atributos
 var hp = 100
-var damage = 25
+var damage = 30
 var stamina = 100
 var movement:Vector2
 var inertia:float = 0.9
@@ -14,13 +10,14 @@ var dead := false
 var can_attack:bool=true
 var attack_delay = 0.5
 
+var stamina_to_increase = 15
+
 var direction = 1
 var flip_h:bool=false
 
 var perda_de_stamina = 20
 
-var inimigo
-
+var inimigo = []
 
 const SPEED = 50
 const MAX_SPEED = 200
@@ -32,6 +29,7 @@ onready var interface = $CanvasLayer/Interface
 
 ##Criando nós
 onready var timer = Timer.new()
+onready var stamina_timer = Timer.new()
 
 ##Chamado quando o jogador pressiona tecla de atacar
 func attack():
@@ -41,7 +39,8 @@ func attack():
 		print("atacou")
 		stamina -= perda_de_stamina
 		if inimigo:
-			inimigo.receive_damage(damage)
+			for enemy in inimigo:
+				enemy.receive_damage(damage)
 		
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
@@ -134,6 +133,9 @@ func conectar_HUD():
 
 func timer_completo():
 	can_attack = true
+	
+func timer_stamina():
+	stamina += stamina_to_increase
 
 func _ready():
 	timer.set_one_shot(true)
@@ -141,17 +143,26 @@ func _ready():
 	timer.connect("timeout",self,"timer_completo")
 	add_child(timer)
 	
-func _draw():
-	draw_line(get_node("Camera2D").position,get_node("distancia_de_hit/CollisionShape2D").position,Color(255,0,0),1.0)
-	pass
-	
+	stamina_timer.set_autostart(true)
+	stamina_timer.set_one_shot(false)
+	stamina_timer.set_wait_time(5)
+	timer.connect("timeout",self,"timer_stamina")
+	add_child(stamina_timer)
+
 func _physics_process(delta):
 	#Processa os movimentos e calcula a gravidade
 	input()
 	conectar_HUD()
-	update()
 
-
-func objeto_colidiu_com_area2d(body):
+##Se o inimigo entrou na área, seu alvo agora é esse
+func _on_distancia_de_hit_body_entered(body):
 	if body.is_in_group("enemy"):
-		inimigo = body
+		inimigo.append(body)
+
+##Se o inimigo entrou na área mas saiu, seu alvo não é mais esse
+func _on_distancia_de_hit_body_exited(body):
+	if inimigo.has(body):
+		inimigo.erase(body)
+	#if inimigo == body:
+	#	inimigo.erase(body)
+		
