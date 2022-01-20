@@ -19,7 +19,7 @@ func _process(delta):
 		for i in get_slide_count():
 			var collision = get_slide_collision(i)
 			if collision.collider.name == "Player":
-				player.stamina_to_increase(stamina_to_increase)
+				player.stamina_increase(stamina_to_increase)
 				give_stamina()
 	
 	phy = move_and_slide(phy, Vector2.UP);

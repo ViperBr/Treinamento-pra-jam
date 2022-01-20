@@ -50,7 +50,6 @@ func receive_damage(damage):
 		dead()
 	else:
 		hp -= damage
-		
 
 ##Chamado quando o jogador morre
 func dead():
