@@ -1,15 +1,26 @@
 extends KinematicBody2D
 
+##Sinais
+signal inimigo_dentro_do_colisor(body)
+
+
 #Definindo variáveis principais e atributos
-var hp = 2
+var hp = 100
 var damage = 25
 var stamina = 100
 var movement:Vector2
 var inertia:float = 0.9
 var dead := false
 var can_attack:bool=true
-
 var attack_delay = 0.5
+
+var direction = 1
+var flip_h:bool=false
+
+var perda_de_stamina = 20
+
+var inimigo
+
 
 const SPEED = 50
 const MAX_SPEED = 200
@@ -24,8 +35,14 @@ onready var timer = Timer.new()
 
 ##Chamado quando o jogador pressiona tecla de atacar
 func attack():
-	print("ataque!")
-
+	if stamina - perda_de_stamina <= 0:
+		stamina = 0
+	else:
+		print("atacou")
+		stamina -= perda_de_stamina
+		if inimigo:
+			inimigo.receive_damage(damage)
+		
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
 	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
@@ -92,10 +109,28 @@ func input():
 	##Aplica os movimentos do vetorial ao corpo do nó:
 	movement = move_and_slide(movement, Vector2.UP)
 	
+	
+	##Define a direção do jogador
+	if movement.x > 0:
+		direction = 1
+	else:
+		direction = -1
+		
+		
+	##Vai flipar o colisionshape de acordo com a direção	
+	if direction > 0:
+		if flip_h:
+			get_node("distancia_de_hit/CollisionShape2D").position.x *=-1
+		flip_h = false
+	if direction < 0:
+		if not flip_h:
+			get_node("distancia_de_hit/CollisionShape2D").position.x *=-1
+		flip_h = true
+	
+	
 func conectar_HUD():
 	interface.conectar_stamina(stamina)
 	interface.conectar_vida(hp)
-	
 
 func timer_completo():
 	can_attack = true
@@ -106,7 +141,17 @@ func _ready():
 	timer.connect("timeout",self,"timer_completo")
 	add_child(timer)
 	
+func _draw():
+	draw_line(get_node("Camera2D").position,get_node("distancia_de_hit/CollisionShape2D").position,Color(255,0,0),1.0)
+	pass
+	
 func _physics_process(delta):
 	#Processa os movimentos e calcula a gravidade
 	input()
 	conectar_HUD()
+	update()
+
+
+func objeto_colidiu_com_area2d(body):
+	if body.is_in_group("enemy"):
+		inimigo = body

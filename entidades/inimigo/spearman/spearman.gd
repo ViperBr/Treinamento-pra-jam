@@ -21,8 +21,8 @@ func attack():
 		player.receive_damage(damage)
 		timer = 0
 	
-func receive_damage():
-	pass
+func receive_damage(damage):
+	print("fui atacado:" + str(damage) + "de dano")
 
 func dead():
 	pass

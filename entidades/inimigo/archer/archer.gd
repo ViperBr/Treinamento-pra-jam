@@ -23,8 +23,8 @@ func attack():
 		##Aqui coloca pra instanciar uma flecha
 		timer = 0
 	
-func receive_damage():
-	pass
+func receive_damage(damage):
+	print("fui atacado:" + str(damage) + "de dano")
 
 func dead():
 	pass
