@@ -63,7 +63,6 @@ func sumir():
 	queue_free()
 
 func _process(delta):
-	print(timer_pra_sumir.time_left)
 	
 	if not dead:
 		if player and player.position.x - self.position.x < -12 and player.position.x - self.position.x > -100:
