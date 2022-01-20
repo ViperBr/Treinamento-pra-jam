@@ -1,6 +1,6 @@
 extends KinematicBody2D
 const grv = 30;
-var stamina_to_increase = 50
+var life_to_increase = 50
 onready var player
 var phy = Vector2(0,grv)
 
@@ -16,7 +16,7 @@ func _process(delta):
 		for i in get_slide_count():
 			var collision = get_slide_collision(i)
 			if collision.collider.name == "Player":
-				player.stamina_increase(stamina_to_increase)
+				player.life_increase(life_to_increase)
 				queue_free()
 	
 	phy = move_and_slide(phy, Vector2.UP);

@@ -11,14 +11,15 @@ var initialpos = self.position
 var pos = Vector2(0,position.y);
 
 onready var player
+onready var timer = 0
 
 func attack():
 	direction = 0;
-	$AnimatedSprite.play("attack")
-	for p in get_tree().get_nodes_in_group("player"):
-		player = p
-
-	
+	timer += 1 * get_physics_process_delta_time()
+	if timer >= 1:
+		$AnimatedSprite.play("attack")
+		player.receive_damage(damage)
+		timer = 0
 	
 func receive_damage():
 	pass
@@ -29,12 +30,11 @@ func dead():
 func _ready():
 	direction = 0;
 	$AnimatedSprite.flip_h = !$AnimatedSprite.flip_h;
-	pass
+	for p in get_tree().get_nodes_in_group("player"):
+		player = p
+
 
 func _process(delta):
-	
-	for p in get_tree().get_nodes_in_group("players"):
-		player = p
 	
 	if player and player.position.x - self.position.x < 500 and player.position.x - self.position.x > 100: 
 		direction = 1;

@@ -1,33 +1,44 @@
 extends KinematicBody2D
 
 #Definindo variáveis principais e atributos
-var hp = 100
+var hp = 2
 var damage = 25
 var stamina = 100
 var movement:Vector2
 var inertia:float = 0.9
 var dead := false
+var can_attack:bool=true
+
+var attack_delay = 0.5
+
 const SPEED = 50
 const MAX_SPEED = 200
 const JUMP = 400
 const GRAVITY = 10
 
 ##Referenciando nós
-onready var interface = get_node("")
+onready var interface = $CanvasLayer/Interface
 
+##Criando nós
+onready var timer = Timer.new()
 
 ##Chamado quando o jogador pressiona tecla de atacar
 func attack():
-	pass
+	print("ataque!")
 
 ##Chamado quando o jogador recebe dano por um terceiro
-func receive_damage():
-	pass
+func receive_damage(damage):
+	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
+	if hp - damage <= 0:
+		hp = 0
+		dead()
+	else:
+		hp -= damage
+		
 
 ##Chamado quando o jogador morre
 func dead():
-	pass
-
+	dead = true
 
 ##Chamado quando o jogador encosta em um coletável de stamina
 func stamina_increase(increase):
@@ -60,7 +71,12 @@ func input():
 	
 		if Input.is_action_just_released("up") and not is_on_floor():
 			movement.y *= inertia - 0.1
-	
+			
+		if Input.is_action_pressed("attack") and can_attack:
+			attack()
+			can_attack = false
+			timer.start()
+			
 	##Gravidade:
 	movement.y += GRAVITY
 	
@@ -77,10 +93,20 @@ func input():
 	movement = move_and_slide(movement, Vector2.UP)
 	
 func conectar_HUD():
-	pass
-func _ready():
-	pass
+	interface.conectar_stamina(stamina)
+	interface.conectar_vida(hp)
+	
 
+func timer_completo():
+	can_attack = true
+
+func _ready():
+	timer.set_one_shot(true)
+	timer.set_wait_time(attack_delay)
+	timer.connect("timeout",self,"timer_completo")
+	add_child(timer)
+	
 func _physics_process(delta):
 	#Processa os movimentos e calcula a gravidade
 	input()
+	conectar_HUD()
