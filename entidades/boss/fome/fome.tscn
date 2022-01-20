@@ -90,7 +90,6 @@ __meta__ = {
 }
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
-position = Vector2( -4.25, -0.166667 )
 scale = Vector2( 0.585938, 0.630208 )
 frames = SubResource( 1 )
 animation = "idle"
@@ -98,7 +97,6 @@ speed_scale = 3.0
 playing = true
 
 [node name="CollisionSprite" type="CollisionShape2D" parent="."]
-position = Vector2( -3.819, 0 )
 shape = SubResource( 3 )
 
 [node name="AreaWeapon" type="Area2D" parent="."]
