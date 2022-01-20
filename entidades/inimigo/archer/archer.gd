@@ -28,10 +28,10 @@ func attack():
 		get_node("/root/Main").add_child(new_arrow)
 		new_arrow.position = position
 		new_arrow.position.y = position.y - 10
-		new_arrow.direction = arrow_direction
-		#player.receive_damage(damage)
 		
-		##Aqui coloca pra instanciar uma flecha
+		arrow_direction = 1 if player.position.x - position.x > 0 else -1
+		
+		new_arrow.direction = arrow_direction
 		timer = 0
 	
 func receive_damage(damage):

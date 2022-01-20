@@ -10,11 +10,11 @@ var dead := false
 var can_attack:bool=true
 var attack_delay = 0.5
 
-var stamina_to_increase = 15
-
 var direction = 1
 var flip_h:bool=false
 
+
+var stamina_to_increase = 15
 var perda_de_stamina = 20
 
 var inimigo = []
@@ -108,13 +108,11 @@ func input():
 	##Aplica os movimentos do vetorial ao corpo do nó:
 	movement = move_and_slide(movement, Vector2.UP)
 	
-	
 	##Define a direção do jogador
 	if movement.x > 0:
 		direction = 1
 	else:
 		direction = -1
-		
 		
 	##Vai flipar o colisionshape de acordo com a direção	
 	if direction > 0:
@@ -126,7 +124,6 @@ func input():
 			get_node("distancia_de_hit/CollisionShape2D").position.x *=-1
 		flip_h = true
 	
-	
 func conectar_HUD():
 	interface.conectar_stamina(stamina)
 	interface.conectar_vida(hp)
@@ -135,7 +132,10 @@ func timer_completo():
 	can_attack = true
 	
 func timer_stamina():
-	stamina += stamina_to_increase
+	if stamina + stamina_to_increase > 100:
+		stamina = 100
+	else:
+		stamina += stamina_to_increase
 
 func _ready():
 	timer.set_one_shot(true)
@@ -153,7 +153,9 @@ func _physics_process(delta):
 	#Processa os movimentos e calcula a gravidade
 	input()
 	conectar_HUD()
-
+	
+	print(stamina_timer.time_left)
+	
 ##Se o inimigo entrou na área, seu alvo agora é esse
 func _on_distancia_de_hit_body_entered(body):
 	if body.is_in_group("enemy"):
@@ -163,6 +165,3 @@ func _on_distancia_de_hit_body_entered(body):
 func _on_distancia_de_hit_body_exited(body):
 	if inimigo.has(body):
 		inimigo.erase(body)
-	#if inimigo == body:
-	#	inimigo.erase(body)
-		
