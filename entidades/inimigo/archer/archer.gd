@@ -59,7 +59,6 @@ func _ready():
 	add_child(timer_pra_sumir)
 	
 func sumir():
-	print("dei queue_free()")
 	queue_free()
 
 func _process(delta):

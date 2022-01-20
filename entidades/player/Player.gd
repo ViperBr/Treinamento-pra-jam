@@ -14,7 +14,7 @@ var direction = 1
 var flip_h:bool=false
 
 
-var stamina_to_increase = 15
+var stamina_to_increase = 5
 var perda_de_stamina = 20
 
 var inimigo = []
@@ -145,8 +145,8 @@ func _ready():
 	
 	stamina_timer.set_autostart(true)
 	stamina_timer.set_one_shot(false)
-	stamina_timer.set_wait_time(5)
-	timer.connect("timeout",self,"timer_stamina")
+	stamina_timer.set_wait_time(1)
+	stamina_timer.connect("timeout",self,"timer_stamina")
 	add_child(stamina_timer)
 
 func _physics_process(delta):
@@ -154,7 +154,7 @@ func _physics_process(delta):
 	input()
 	conectar_HUD()
 	
-	#print(stamina_timer.time_left)
+	print(stamina_timer.time_left)
 	
 ##Se o inimigo entrou na área, seu alvo agora é esse
 func _on_distancia_de_hit_body_entered(body):
