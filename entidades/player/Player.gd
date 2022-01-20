@@ -8,7 +8,7 @@ var movement:Vector2
 var inertia:float = 0.9
 var dead := false
 var can_attack:bool=true
-var attack_delay = 0.5
+var attack_delay = 0.3
 
 var direction = 1
 var flip_h:bool=false
@@ -18,6 +18,9 @@ var stamina_to_increase = 5
 var perda_de_stamina = 20
 
 var inimigo = []
+
+var alvo_flecha = null
+
 
 const SPEED = 50
 const MAX_SPEED = 200
@@ -34,7 +37,7 @@ onready var stamina_timer = Timer.new()
 ##Chamado quando o jogador pressiona tecla de atacar
 func attack():
 	if stamina - perda_de_stamina <= 0:
-		stamina = 0
+		return
 	else:
 		print("atacou")
 		stamina -= perda_de_stamina
@@ -42,6 +45,9 @@ func attack():
 			for enemy in inimigo:
 				enemy.receive_damage(damage)
 		
+		if alvo_flecha:
+			alvo_flecha.flecha_acertada()
+			
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
 	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
@@ -153,14 +159,29 @@ func _physics_process(delta):
 	input()
 	conectar_HUD()
 	
-	print(stamina_timer.time_left)
-	
 ##Se o inimigo entrou na área, seu alvo agora é esse
 func _on_distancia_de_hit_body_entered(body):
 	if body.is_in_group("enemy"):
 		inimigo.append(body)
+	
+	
+	#if body.is_in_group("flecha"):
+	#	print("encontrou flecha")
+	#	alvo_flecha = body
+	
 
 ##Se o inimigo entrou na área mas saiu, seu alvo não é mais esse
 func _on_distancia_de_hit_body_exited(body):
 	if inimigo.has(body):
 		inimigo.erase(body)
+	if alvo_flecha == body:
+		alvo_flecha = null
+
+func _on_distancia_de_hit_area_shape_entered(area_rid, area, area_shape_index, local_shape_index):
+	if area.is_in_group("flecha"):
+		alvo_flecha = area
+
+
+func _on_distancia_de_hit_area_exited(area):
+	if area == alvo_flecha:
+		alvo_flecha = null

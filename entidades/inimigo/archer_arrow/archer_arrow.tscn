@@ -6,9 +6,9 @@
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 17, 5 )
 
-[node name="archer_arrow" type="Area2D"]
-collision_layer = 0
-collision_mask = 48
+[node name="archer_arrow" type="Area2D" groups=["flecha"]]
+collision_layer = 64
+collision_mask = 112
 script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
