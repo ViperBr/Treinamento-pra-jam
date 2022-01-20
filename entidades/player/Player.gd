@@ -53,7 +53,7 @@ func attack():
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
 	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
-	if not stun_to_hitted:
+	if stun_to_hitted == false:
 		stun_to_hitted = true;
 		stun_timer.start()
 		if hp - damage <= 0:
@@ -158,7 +158,7 @@ func _ready():
 	
 	stun_timer.set_autostart(false)
 	stun_timer.set_one_shot(true)
-	stun_timer.set_wait_time(1.5)
+	stun_timer.set_wait_time(2)
 	stun_timer.connect("timeout",self,"set_stun_time_false")
 	add_child(stun_timer)
 	
