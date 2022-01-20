@@ -15,6 +15,7 @@ var state =  ["idle","att"]
 var direction = -1
 var initialpos = self.position
 var pos = Vector2(0,position.y);
+var attacking = false;
 
 onready var weapon = $AreaWeapon.get_child(0)
 onready var player
@@ -39,6 +40,7 @@ func _ready():
 
 func attack(attack):
 	if attack == 0:
+		attacking = true;
 		sprite.play("dash")
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_section_attacks",[state[0]])
@@ -47,6 +49,7 @@ func attack(attack):
 		weapon.position.x = 55 * direction
 		pos.x = 1000 * direction
 	elif attack == 1:
+		attacking = true;
 		sprite.play("attack")
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_vulnerability")
@@ -65,6 +68,7 @@ func dead():
 
 
 func set_vulnerability():
+	attacking = false;
 	sprite.play("stun")
 	timer.disconnect("timeout", self,"set_vulnerability")
 	timer.connect("timeout",self,"set_section_attacks",[state[0]])
@@ -88,6 +92,7 @@ func set_section_attacks(att):
 			atts = 0
 			attack(1)
 	else:
+		attacking = false;
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_section_attacks",[state[1]])
 		timer.set_wait_time(intatts)
@@ -98,6 +103,12 @@ func set_section_attacks(att):
 
 ##função chamada a cada frame
 func _process(delta):
+	
+	for i in $AreaWeapon.get_overlapping_bodies():
+		if attacking and i == player and not player.stun_to_hitted:
+			player.receive_damage(damage)
+			continue
+	
 	pos.y += GRV
 	if player and player.position.x - self.position.x < -12:
 			direction = -1;

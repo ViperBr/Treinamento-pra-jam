@@ -139,9 +139,11 @@ shape = SubResource( 3 )
 
 [node name="AreaWeapon" type="Area2D" parent="."]
 position = Vector2( -1.017, 0 )
+collision_layer = 16
+collision_mask = 16
 
 [node name="weapon" type="CollisionShape2D" parent="AreaWeapon"]
-position = Vector2( 0, -5.16667 )
+position = Vector2( 0, -5 )
 shape = SubResource( 4 )
 
 [node name="Timer" type="Timer" parent="."]

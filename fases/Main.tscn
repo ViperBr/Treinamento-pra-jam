@@ -14,10 +14,10 @@
 [node name="Player" parent="." instance=ExtResource( 3 )]
 
 [node name="spearman" parent="." instance=ExtResource( 4 )]
-position = Vector2( 169, 220 )
+position = Vector2( 610, 224 )
 
 [node name="warrior" parent="." instance=ExtResource( 5 )]
-position = Vector2( 245, 221 )
+position = Vector2( 584, 225 )
 
 [node name="archer" parent="." instance=ExtResource( 1 )]
 position = Vector2( 381, 149 )

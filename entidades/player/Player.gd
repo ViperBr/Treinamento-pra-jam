@@ -21,6 +21,7 @@ var inimigo = []
 
 var alvo_flecha = null
 
+var stun_to_hitted = false;
 
 const SPEED = 50
 const MAX_SPEED = 200
@@ -33,6 +34,7 @@ onready var interface = $CanvasLayer/Interface
 ##Criando nós
 onready var timer = Timer.new()
 onready var stamina_timer = Timer.new()
+onready var stun_timer = Timer.new()
 
 ##Chamado quando o jogador pressiona tecla de atacar
 func attack():
@@ -51,11 +53,17 @@ func attack():
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
 	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
-	if hp - damage <= 0:
-		hp = 0
-		dead()
-	else:
-		hp -= damage
+	if not stun_to_hitted:
+		stun_to_hitted = true;
+		stun_timer.start()
+		if hp - damage <= 0:
+			hp = 0
+			dead()
+		else:
+			hp -= damage
+
+func set_stun_time_false():
+	stun_to_hitted = false;
 
 ##Chamado quando o jogador morre
 func dead():
@@ -147,6 +155,12 @@ func _ready():
 	timer.set_wait_time(attack_delay)
 	timer.connect("timeout",self,"timer_completo")
 	add_child(timer)
+	
+	stun_timer.set_autostart(false)
+	stun_timer.set_one_shot(true)
+	stun_timer.set_wait_time(1.5)
+	stun_timer.connect("timeout",self,"set_stun_time_false")
+	add_child(stun_timer)
 	
 	stamina_timer.set_autostart(true)
 	stamina_timer.set_one_shot(false)
