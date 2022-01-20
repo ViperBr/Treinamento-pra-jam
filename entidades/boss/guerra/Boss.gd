@@ -49,8 +49,8 @@ func attack(attack):
 	elif attack == 1:
 		sprite.play("attack")
 		timer.disconnect("timeout", self,"set_section_attacks")
-		timer.connect("timeout",self,"set_section_attacks",[state[0]])
-		timer.set_wait_time(velatts*4)
+		timer.connect("timeout",self,"set_vulnerability")
+		timer.set_wait_time(velatts*2)
 		timer.start()
 		print_debug("ataque especial")
 	pass
@@ -61,6 +61,15 @@ func receive_damage(damage):
 
 func dead():
 	
+	pass
+
+
+func set_vulnerability():
+	sprite.play("stun")
+	timer.disconnect("timeout", self,"set_vulnerability")
+	timer.connect("timeout",self,"set_section_attacks",[state[0]])
+	timer.set_wait_time(4)
+	timer.start()
 	pass
 
 func set_section_attacks(att):
