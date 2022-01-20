@@ -18,6 +18,7 @@ var pos = Vector2(0,position.y);
 
 onready var weapon = $AreaWeapon.get_child(0)
 onready var player
+onready var sprite = $AnimatedSprite
 onready var interval = $Interval
 onready var timer = $Timer
 onready var dead: = false
@@ -38,6 +39,7 @@ func _ready():
 
 func attack(attack):
 	if attack == 0:
+		sprite.play("dash")
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_section_attacks",[state[0]])
 		timer.set_wait_time(velatts)
@@ -45,11 +47,11 @@ func attack(attack):
 		weapon.position.x = 55 * direction
 		pos.x = 1000 * direction
 	elif attack == 1:
+		sprite.play("attack")
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_section_attacks",[state[0]])
-		timer.set_wait_time(velatts)
+		timer.set_wait_time(velatts*4)
 		timer.start()
-		pos.x = 1000 * direction
 		print_debug("ataque especial")
 	pass
 
@@ -82,6 +84,7 @@ func set_section_attacks(att):
 		timer.set_wait_time(intatts)
 		timer.start()
 		pos.x = 0;
+		sprite.play("idle")
 	pass
 
 ##função chamada a cada frame
@@ -89,10 +92,10 @@ func _process(delta):
 	pos.y += GRV
 	if player and player.position.x - self.position.x < -12:
 			direction = -1;
-			$AnimatedSprite.flip_h = true;
+			$AnimatedSprite.flip_h = false;
 	if player and player.position.x - self.position.x > 12:
 			direction = 1;
-			$AnimatedSprite.flip_h = false;
+			$AnimatedSprite.flip_h = true;
 	
 	pos = move_and_slide(pos)
 	
