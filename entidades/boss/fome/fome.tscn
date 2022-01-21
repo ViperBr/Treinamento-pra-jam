@@ -13,17 +13,17 @@ flags = 4
 atlas = ExtResource( 1 )
 region = Rect2( 0, 0, 64, 64 )
 
+[sub_resource type="AtlasTexture" id=9]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 64, 64 )
+
 [sub_resource type="AtlasTexture" id=7]
 flags = 4
 atlas = ExtResource( 1 )
 region = Rect2( 0, 0, 64, 64 )
 
 [sub_resource type="AtlasTexture" id=8]
-flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 0, 0, 64, 64 )
-
-[sub_resource type="AtlasTexture" id=9]
 flags = 4
 atlas = ExtResource( 1 )
 region = Rect2( 0, 0, 64, 64 )
@@ -40,6 +40,11 @@ animations = [ {
 "name": "attack",
 "speed": 5.0
 }, {
+"frames": [ SubResource( 9 ) ],
+"loop": true,
+"name": "walk",
+"speed": 5.0
+}, {
 "frames": [ SubResource( 7 ) ],
 "loop": true,
 "name": "stun",
@@ -48,11 +53,6 @@ animations = [ {
 "frames": [ SubResource( 8 ) ],
 "loop": true,
 "name": "dash",
-"speed": 5.0
-}, {
-"frames": [ SubResource( 9 ) ],
-"loop": true,
-"name": "walk",
 "speed": 5.0
 } ]
 
@@ -71,18 +71,18 @@ region = Rect2( 0, 0, 64, 64 )
 
 [sub_resource type="SpriteFrames" id=12]
 animations = [ {
-"frames": [ SubResource( 11 ), null ],
-"loop": true,
-"name": "default",
-"speed": 5.0
-}, {
 "frames": [ null ],
 "loop": true,
 "name": "empty",
 "speed": 5.0
+}, {
+"frames": [ SubResource( 11 ), null ],
+"loop": true,
+"name": "default",
+"speed": 5.0
 } ]
 
-[node name="Fome" type="KinematicBody2D"]
+[node name="Fome" type="KinematicBody2D" groups=["boss"]]
 scale = Vector2( 2, 3 )
 script = ExtResource( 2 )
 __meta__ = {

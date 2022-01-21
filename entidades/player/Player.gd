@@ -190,6 +190,8 @@ func input():
 func conectar_HUD():
 	interface.conectar_stamina(stamina)
 	interface.conectar_vida(hp)
+	for i in get_tree().get_nodes_in_group("boss"):
+		interface.conectar_vida_boss(i.hp)
 
 func timer_completo():
 	can_attack = true
