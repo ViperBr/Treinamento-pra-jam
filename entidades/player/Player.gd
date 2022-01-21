@@ -37,6 +37,13 @@ var can_dash:= true
 var can_walk_animation:= true
 var can_idle_animation:= true
 
+
+###Relacionado a veneno poison;poisoning
+var poisoning = 0
+var poisoning_timer = Timer.new()
+
+
+
 const SPEED = 50
 const MAX_SPEED = 200
 const JUMP = 400
@@ -98,6 +105,8 @@ func receive_damage(damage):
 			dead()
 		else:
 			hp -= damage
+			if poisoning > 0:
+				poisoning_timer.start()
 
 func set_stun_time_false():
 	stun_to_hitted = false;
@@ -106,6 +115,16 @@ func set_stun_time_false():
 func set_dash_time_false():
 	can_dash = true
 	dash_number = 0
+
+func set_poisoning_time_false():
+	if not alvo_boss_peste:
+		poisoning = 0
+	else:
+		if hp - 5 <= 0:
+			dead()
+		else:
+			hp -= 5
+
 
 ##Chamado quando o jogador morre
 func dead():
@@ -246,10 +265,16 @@ func _ready():
 	stamina_timer.connect("timeout",self,"timer_stamina")
 	add_child(stamina_timer)
 	
+	poisoning_timer.set_autostart(false)
+	poisoning_timer.set_one_shot(false)
+	poisoning_timer.set_wait_time(1)
+	poisoning_timer.connect("timeout",self,"set_poisoning_time_false")
 func _physics_process(delta):
 	#Processa os movimentos e calcula a gravidade
 	input()
 	conectar_HUD()
+	
+	
 	
 ##Se o inimigo entrou na área, seu alvo agora é esse
 func _on_distancia_de_hit_body_entered(body):

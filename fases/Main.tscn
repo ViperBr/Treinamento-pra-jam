@@ -4,7 +4,7 @@
 [ext_resource path="res://entidades/player/Player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://entidades/coletaveis/vida/vida.tscn" type="PackedScene" id=6]
 [ext_resource path="res://entidades/coletaveis/stamina/stamina.tscn" type="PackedScene" id=7]
-[ext_resource path="res://entidades/boss/guerra/guerra.tscn" type="PackedScene" id=8]
+[ext_resource path="res://entidades/boss/peste/peste.tscn" type="PackedScene" id=8]
 
 [node name="Main" type="Node"]
 
@@ -26,5 +26,5 @@ position = Vector2( 161, 173 )
 [node name="Stamina" parent="." instance=ExtResource( 7 )]
 position = Vector2( -170, 298 )
 
-[node name="Guerra" parent="." instance=ExtResource( 8 )]
-position = Vector2( 292, 149 )
+[node name="Peste" parent="." instance=ExtResource( 8 )]
+position = Vector2( -717, 173 )

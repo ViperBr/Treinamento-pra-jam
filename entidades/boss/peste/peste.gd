@@ -153,10 +153,10 @@ func _process(delta):
 	pos.y += GRV
 	if player and player.position.x - self.position.x < -12:
 			direction = -1;
-			$AnimatedSprite.flip_h = false;
+			$AnimatedSprite.flip_h = true;
 	if player and player.position.x - self.position.x > 12:
 			direction = 1;
-			$AnimatedSprite.flip_h = true;
+			$AnimatedSprite.flip_h = false;
 	
 	pos = move_and_slide(pos)
 	
