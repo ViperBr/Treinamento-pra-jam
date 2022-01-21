@@ -7,7 +7,7 @@ var stamina = 100
 var movement:Vector2
 var inertia:float = 0.9
 var dead := false
-var poisoning = false;
+var poisoning = 0;
 
 var attack_delay = 0.3
 var attacking = false
@@ -47,6 +47,7 @@ onready var animation = $AnimatedSprite
 onready var stun_player = $stun_player
 ##Criando nós
 onready var timer = Timer.new()
+onready var timer_poison = Timer.new()
 onready var stamina_timer = Timer.new()
 onready var stun_timer = Timer.new()
 onready var dash_timer = Timer.new()
@@ -75,14 +76,15 @@ func attack():
 		
 		if alvo_flecha:
 			alvo_flecha.flecha_acertada()
-			
-#		if alvo_boss_peste:
-#			print(alvo_boss_peste)
-#			alvo_boss_peste = get_node("/root/Main/Peste")
-#			if alvo_boss_peste.specialatt == true:
-#				alvo_boss_peste.reback = true
-#				print("mudei o reback dele")
-	
+		
+
+func receive_poison_damage(damage):
+	if hp - damage <= 0:
+		hp = 0
+		dead()
+	else:
+		hp -= damage
+
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
 	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
@@ -118,6 +120,7 @@ func stamina_increase(increase):
 ##Chamada quando o player encosta em um coletável de vida
 func life_increase(increase):
 	# verifica se o hp suporta a incrementação da vida
+	poisoning = 0;
 	if hp + increase > 100:
 		hp = 100;
 	else:
@@ -215,11 +218,22 @@ func timer_stamina():
 	else:
 		stamina += stamina_to_increase
 
+func timer_damage_poisoning():
+	if poisoning > 0:
+		receive_poison_damage(poisoning);
+
 func _ready():
 	timer.set_one_shot(true)
 	timer.set_wait_time(attack_delay)
 	timer.connect("timeout",self,"timer_completo")
 	add_child(timer)
+	
+	timer_poison.set_one_shot(false)
+	timer_poison.set_wait_time(1.5)
+	timer_poison.connect("timeout",self,"timer_damage_poisoning")
+	add_child(timer_poison)
+	timer_poison.start()
+	
 	
 	stun_timer.set_autostart(false)
 	stun_timer.set_one_shot(true)
@@ -238,9 +252,9 @@ func _ready():
 	stamina_timer.set_wait_time(0.5)
 	stamina_timer.connect("timeout",self,"timer_stamina")
 	add_child(stamina_timer)
-	
+
 func _physics_process(delta):
-	#Processa os movimentos e calcula a gravidade
+	#Processa os movimentos e calcula a gravidade 
 	input()
 	conectar_HUD()
 	
@@ -248,8 +262,6 @@ func _physics_process(delta):
 func _on_distancia_de_hit_body_entered(body):
 	if body.is_in_group("enemy"):
 		inimigo.append(body)
-	if body.is_in_group("boss_peste"):
-		alvo_boss_peste = body
 
 ##Se o inimigo entrou na área mas saiu, seu alvo não é mais esse
 func _on_distancia_de_hit_body_exited(body):
@@ -257,8 +269,6 @@ func _on_distancia_de_hit_body_exited(body):
 		inimigo.erase(body)
 	if alvo_flecha == body:
 		alvo_flecha = null
-	if alvo_boss_peste == body:
-		alvo_boss_peste = null
 
 func _on_distancia_de_hit_area_shape_entered(area_rid, area, area_shape_index, local_shape_index):
 	if area.is_in_group("flecha"):
@@ -268,5 +278,3 @@ func _on_distancia_de_hit_area_shape_entered(area_rid, area, area_shape_index, l
 func _on_distancia_de_hit_area_exited(area):
 	if area == alvo_flecha:
 		alvo_flecha = null
-	
-		
