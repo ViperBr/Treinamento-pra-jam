@@ -103,6 +103,7 @@ func set_stun_time_false():
 
 func set_dash_time_false():
 	can_dash = true
+	dash_number = 0
 
 ##Chamado quando o jogador morre
 func dead():
@@ -151,10 +152,11 @@ func input():
 			can_attack = false
 			timer.start()
 			
-		if Input.is_action_pressed("dash") and can_dash:
+		if Input.is_action_pressed("dash") and can_dash and dash_number < max_dash_number:
 			dash()
 			movement.x = SPEED * direction
 			dash_timer.start()
+			dash_number += 1
 			can_dash = false
 			pass
 			
@@ -194,10 +196,6 @@ func input():
 			get_node("distancia_de_hit/CollisionShape2D").position.x *=-1
 		flip_h = true
 		animation.flip_h = true
-	
-	##Se estiver no chão, resete o número de dash para que consiga dar.
-	if is_on_floor():
-		dash_number = 0
 	
 func conectar_HUD():
 	interface.conectar_stamina(stamina)
