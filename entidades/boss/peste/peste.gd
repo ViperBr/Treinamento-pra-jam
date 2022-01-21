@@ -78,6 +78,7 @@ func receive_damage(damage):
 		timer.start()
 		print_debug("hp")
 	else:
+		hp = 0;
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"dead")
 		timer.set_wait_time(intatts)
