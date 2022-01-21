@@ -69,7 +69,9 @@ func receive_damage(damage):
 		print("levei dano")
 
 func dead():
-	print("morri")
+	dead = true
+	sprite.play("dead")
+	
 
 func set_vulnerability():
 	if not dead:

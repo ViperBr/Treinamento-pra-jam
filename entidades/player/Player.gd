@@ -161,7 +161,7 @@ func input():
 			dash_number += 1
 			can_dash = false
 			pass
-		if not Input.is_action_pressed("left") and not Input.is_action_pressed("right"):
+		if not Input.is_action_pressed("left") and not Input.is_action_pressed("right") and not Input.is_action_pressed("attack"):
 			if can_idle_animation:
 				animation.play("idle")
 	##Gravidade:
