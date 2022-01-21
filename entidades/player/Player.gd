@@ -7,24 +7,21 @@ var stamina = 100
 var movement:Vector2
 var inertia:float = 0.9
 var dead := false
-var poisoning = 0;
 
-var attack_delay = 1
-var attacking = false
+var attack_delay = 0.3
+var attacking
 
 ##propriedades de dash
-var max_dash_number = 1
+var max_dash_number = 2
 var dash_number = 0
 ##
 
 var direction = 1
-var input_direction = 0
 var flip_h:bool=false
 
 
 var stamina_to_increase = 5
 var perda_de_stamina = 20
-
 
 ##Todos os alvos definidos capturados por detecções
 var inimigo = []
@@ -38,7 +35,6 @@ var stun_to_hitted = false;
 var can_attack:bool=true
 var can_dash:= true
 var can_walk_animation:= true
-var can_idle_animation:= true
 
 const SPEED = 50
 const MAX_SPEED = 200
@@ -51,15 +47,19 @@ onready var animation = $AnimatedSprite
 onready var stun_player = $stun_player
 ##Criando nós
 onready var timer = Timer.new()
-onready var timer_poison = Timer.new()
 onready var stamina_timer = Timer.new()
 onready var stun_timer = Timer.new()
 onready var dash_timer = Timer.new()
 onready var freeze_animation_timer = Timer.new()
 
-##Chamado quando aperta tecla de dash
+##Chamado quando o jogador pressiona a tecla de dar dash
 func dash():
-	pass
+	if dash_number < max_dash_number + 1:
+		can_dash = true
+		dash_number += 1
+		print_debug("deu dash")
+	else:
+		return
 
 ##Chamado quando o jogador pressiona tecla de atacar
 func attack():
@@ -82,15 +82,8 @@ func attack():
 			
 			if alvo_boss_guerra:
 				alvo_boss_guerra.receive_damage(damage)
-		
 
-func receive_poison_damage(damage):
-	if hp - damage <= 0:
-		hp = 0
-		dead()
-	else:
-		hp -= damage
-
+			
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
 	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
@@ -108,6 +101,9 @@ func set_stun_time_false():
 	stun_to_hitted = false;
 	stun_player.play("normal")
 
+func set_dash_time_false():
+	can_dash = true
+
 ##Chamado quando o jogador morre
 func dead():
 	dead = true
@@ -123,18 +119,14 @@ func stamina_increase(increase):
 ##Chamada quando o player encosta em um coletável de vida
 func life_increase(increase):
 	# verifica se o hp suporta a incrementação da vida
-	poisoning = 0;
 	if hp + increase > 100:
 		hp = 100;
 	else:
 		hp += increase;
-		
-func pode_ativar_dash():
-	can_dash = true
-	dash_number = 0
-	
+
 ##Tudo relacionado aos controles e movimentação do jogador
 func input():
+	
 	#Movimentos de esquerda e direita no eixo x
 	if not dead:
 		if Input.is_action_pressed("left"):
@@ -154,33 +146,26 @@ func input():
 			movement.y *= inertia - 0.1
 			
 		if Input.is_action_pressed("attack") and can_attack:
-			can_idle_animation = false
 			can_walk_animation = false
 			attack()
 			can_attack = false
 			timer.start()
-		
-		if not Input.is_action_pressed("left") and not Input.is_action_pressed("right") and not (Input.is_action_pressed("attack") and can_attack):
-			if can_idle_animation:
-				animation.play("idle")
 			
 		if Input.is_action_pressed("dash") and can_dash:
-			print("deu dash")
-			can_dash = false
-			dash_number += 1
+			dash()
+			movement.x = SPEED * direction
 			dash_timer.start()
-			
-		if dash_number > max_dash_number:
 			can_dash = false
-		
+			pass
+			
 	##Gravidade:
 	movement.y += GRAVITY
 	
 	##Limita a velocidade máxima do eixo X em ambos os lados
-	if not dash():
+	if not Input.is_action_pressed("dash") and can_dash:
 		movement.x = clamp(movement.x,-MAX_SPEED,MAX_SPEED)
 	else:
-		movement.x = clamp(movement.x,-MAX_SPEED*3,MAX_SPEED*3)
+		movement.x = clamp(movement.x,(-MAX_SPEED * 3),(MAX_SPEED* 3 ))
 	
 	##Faz com que a própria velocidade seja multiplicada pela inercia (para deslizar)
 	if is_on_floor():
@@ -209,24 +194,18 @@ func input():
 			get_node("distancia_de_hit/CollisionShape2D").position.x *=-1
 		flip_h = true
 		animation.flip_h = true
-		
 	
+	##Se estiver no chão, resete o número de dash para que consiga dar.
+	if is_on_floor():
+		dash_number = 0
 	
 func conectar_HUD():
 	interface.conectar_stamina(stamina)
 	interface.conectar_vida(hp)
-	if alvo_boss_peste:
-		interface.conectar_vida_boss(alvo_boss_peste.hp,alvo_boss_peste.max_hp)
-	if alvo_boss_guerra:
-		interface.conectar_vida_boss(alvo_boss_guerra.hp,alvo_boss_guerra.max_hp)
-	if alvo_boss_fome:
-		interface.conectar_vida_boss(alvo_boss_fome.hp,alvo_boss_fome.max_hp)
-		
+
 func timer_completo():
 	can_attack = true
-	attacking = false
 	can_walk_animation = true
-	can_idle_animation = true
 	
 func timer_stamina():
 	if stamina + stamina_to_increase > 100:
@@ -234,22 +213,11 @@ func timer_stamina():
 	else:
 		stamina += stamina_to_increase
 
-func timer_damage_poisoning():
-	if poisoning > 0:
-		receive_poison_damage(poisoning);
-
 func _ready():
 	timer.set_one_shot(true)
 	timer.set_wait_time(attack_delay)
 	timer.connect("timeout",self,"timer_completo")
 	add_child(timer)
-	
-	timer_poison.set_one_shot(false)
-	timer_poison.set_wait_time(1.5)
-	timer_poison.connect("timeout",self,"timer_damage_poisoning")
-	add_child(timer_poison)
-	timer_poison.start()
-	
 	
 	stun_timer.set_autostart(false)
 	stun_timer.set_one_shot(true)
@@ -259,8 +227,8 @@ func _ready():
 	
 	dash_timer.set_autostart(false)
 	dash_timer.set_one_shot(true)
-	dash_timer.set_wait_time(2)
-	dash_timer.connect("timeout",self,"pode_ativar_dash")
+	dash_timer.set_wait_time(1)
+	dash_timer.connect("timeout",self,"set_dash_time_false")
 	add_child(dash_timer)
 	
 	stamina_timer.set_autostart(true)
@@ -269,9 +237,8 @@ func _ready():
 	stamina_timer.connect("timeout",self,"timer_stamina")
 	add_child(stamina_timer)
 	
-
 func _physics_process(delta):
-	#Processa os movimentos e calcula a gravidade 
+	#Processa os movimentos e calcula a gravidade
 	input()
 	conectar_HUD()
 	
