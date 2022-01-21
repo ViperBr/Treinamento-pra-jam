@@ -35,6 +35,7 @@ var stun_to_hitted = false;
 var can_attack:bool=true
 var can_dash:= true
 var can_walk_animation:= true
+var can_idle_animation:= true
 
 const SPEED = 50
 const MAX_SPEED = 200
@@ -67,6 +68,7 @@ func attack():
 		return
 	else:
 		if can_attack:
+			can_idle_animation = false
 			animation.play("attack")
 			stamina -= perda_de_stamina
 			attacking = true
@@ -159,7 +161,9 @@ func input():
 			dash_number += 1
 			can_dash = false
 			pass
-			
+		if not Input.is_action_pressed("left") and not Input.is_action_pressed("right"):
+			if can_idle_animation:
+				animation.play("idle")
 	##Gravidade:
 	movement.y += GRAVITY
 	
@@ -200,6 +204,13 @@ func input():
 func conectar_HUD():
 	interface.conectar_stamina(stamina)
 	interface.conectar_vida(hp)
+	
+	if alvo_boss_fome:
+		interface.conectar_vida_boss(alvo_boss_fome.hp,alvo_boss_fome.max_hp)
+	if alvo_boss_peste:
+		interface.conectar_vida_boss(alvo_boss_peste.hp,alvo_boss_peste.max_hp)
+	if alvo_boss_guerra:
+		interface.conectar_vida_boss(alvo_boss_guerra.hp,alvo_boss_guerra.max_hp)
 
 func timer_completo():
 	can_attack = true

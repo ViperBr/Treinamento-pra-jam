@@ -40,22 +40,23 @@ func _ready():
 	pass 
 
 func attack(attack):
-	if attack == 0:
-		attacking = true;
-		sprite.play("dash")
-		timer.disconnect("timeout", self,"set_section_attacks")
-		timer.connect("timeout",self,"set_section_attacks",[state[0]])
-		timer.set_wait_time(velatts)
-		timer.start()
-		weapon.position.x = 55 * direction
-		pos.x = 1000 * direction
-	elif attack == 1:
-		attacking = true;
-		sprite.play("attack")
-		timer.disconnect("timeout", self,"set_section_attacks")
-		timer.connect("timeout",self,"set_vulnerability")
-		timer.set_wait_time(velatts*2)
-		timer.start()
+	if not dead:
+		if attack == 0:
+			attacking = true;
+			sprite.play("dash")
+			timer.disconnect("timeout", self,"set_section_attacks")
+			timer.connect("timeout",self,"set_section_attacks",[state[0]])
+			timer.set_wait_time(velatts)
+			timer.start()
+			weapon.position.x = 55 * direction
+			pos.x = 1000 * direction
+		elif attack == 1:
+			attacking = true;
+			sprite.play("attack")
+			timer.disconnect("timeout", self,"set_section_attacks")
+			timer.connect("timeout",self,"set_vulnerability")
+			timer.set_wait_time(velatts*2)
+			timer.start()
 		#print_debug("ataque especial")
 	pass
 
@@ -71,46 +72,48 @@ func dead():
 	print("morri")
 
 func set_vulnerability():
-	attacking = false;
-	sprite.play("stun")
-	timer.disconnect("timeout", self,"set_vulnerability")
-	timer.connect("timeout",self,"set_section_attacks",[state[0]])
-	timer.set_wait_time(4)
-	timer.start()
+	if not dead:
+		attacking = false;
+		sprite.play("stun")
+		timer.disconnect("timeout", self,"set_vulnerability")
+		timer.connect("timeout",self,"set_section_attacks",[state[0]])
+		timer.set_wait_time(4)
+		timer.start()
 	pass
 
 func set_section_attacks(att):
 	#print_debug(att)
-	if att == "att":
-		if hp < 200:
-			velatts = 3;
-			intatts = 1.5
-		if hp < 100:
-			velatts = 2;
-			intatts = 1;
-		if atts < 4:
-			atts += 1;
-			attack(0)
+	if not dead:
+		if att == "att":
+			if hp < 200:
+				velatts = 3;
+				intatts = 1.5
+			if hp < 100:
+				velatts = 2;
+				intatts = 1;
+			if atts < 4:
+				atts += 1;
+				attack(0)
+			else:
+				atts = 0
+				attack(1)
 		else:
-			atts = 0
-			attack(1)
-	else:
-		attacking = false;
-		timer.disconnect("timeout", self,"set_section_attacks")
-		timer.connect("timeout",self,"set_section_attacks",[state[1]])
-		timer.set_wait_time(intatts)
-		timer.start()
-		pos.x = 0;
-		sprite.play("idle")
+			attacking = false;
+			timer.disconnect("timeout", self,"set_section_attacks")
+			timer.connect("timeout",self,"set_section_attacks",[state[1]])
+			timer.set_wait_time(intatts)
+			timer.start()
+			pos.x = 0;
+			sprite.play("idle")
 	pass
 
 ##função chamada a cada frame
 func _process(delta):
-	
-	for i in $AreaWeapon.get_overlapping_bodies():
-		if attacking and i == player and not player.stun_to_hitted:
-			player.receive_damage(damage)
-			continue
+	if not dead:
+		for i in $AreaWeapon.get_overlapping_bodies():
+			if attacking and i == player and not player.stun_to_hitted:
+				player.receive_damage(damage)
+				continue
 	
 	pos.y += GRV
 	if player and player.position.x - self.position.x < -12:
