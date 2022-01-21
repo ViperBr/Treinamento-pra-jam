@@ -9,6 +9,7 @@
 [node name="Main" type="Node"]
 
 [node name="Player" parent="." instance=ExtResource( 3 )]
+collision_mask = 16
 
 [node name="Cenário" type="Node2D" parent="."]
 

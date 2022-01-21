@@ -21,8 +21,10 @@ var specialatt = false;
 var reback = false;
 
 onready var weapon = $AreaWeapon.get_child(0)
+onready var player_area
 onready var player
 onready var sprite = $AnimatedSprite
+onready var weapon_collision = $AreaWeapon
 onready var interval = $Interval
 onready var timer = $Timer
 onready var dead: = false
@@ -34,6 +36,10 @@ var rng = RandomNumberGenerator.new()
 func _ready():
 	for p in get_tree().get_nodes_in_group("player"):
 		player = p
+	if player:
+		for i in player.get_children():
+			if i is Area2D:
+				player_area = i;
 	rng.randomize()
 	timer.set_one_shot(true)
 	timer.set_wait_time(4)
@@ -63,10 +69,10 @@ func attack(attack):
 			#print_debug("ataque especial")
 	pass
 
-func receive_damage(damage):
-	if hp - damage >= 0:
+func receive_damage(damage_rec):
+	if hp - damage_rec >= 0:
 		print_debug("recebi dano!")
-		hp -= damage
+		hp -= damage_rec
 		attacking = false;
 		specialatt = false;
 		reback = false;
@@ -88,8 +94,7 @@ func receive_damage(damage):
 	pass
 
 func dead():
-	dead = true
-	sprite.play("dead")
+	queue_free()
 	pass
 	
 func set_vulnerability():
@@ -139,8 +144,10 @@ func _process(delta):
 		elif specialatt and reback:
 			weapon.position.x = weapon.position.x - 6 * direction + velatts;
 		
-		for i in $AreaWeapon.get_overlapping_bodies():
-			if specialatt and reback and weapon.position.x - sprite.position.x > -20 and weapon.position.x - sprite.position.x < 20 and i == sprite.get_parent().get_child(2):
+		
+		for i in weapon_collision.get_overlapping_bodies():
+			if specialatt and reback and weapon.position.x - sprite.position.x > -20 and weapon.position.x - sprite.position.x < 20 and i == self :
+				print_debug("colidiu")
 				receive_damage(25)
 			
 			if specialatt and i == player and player.attacking and not reback:
@@ -148,15 +155,14 @@ func _process(delta):
 			if (specialatt or attacking) and i == player and not player.stun_to_hitted and not reback:
 				player.receive_damage(damage)
 				player.poisoning = player.poisoning + 1
-				#print_debug(player.poisoning)
 	
 	pos.y += GRV
 	if player and player.position.x - self.position.x < -12:
 			direction = -1;
-			$AnimatedSprite.flip_h = true;
+			sprite.flip_h = true;
 	if player and player.position.x - self.position.x > 12:
 			direction = 1;
-			$AnimatedSprite.flip_h = false;
+			sprite.flip_h = false;
 	
 	pos = move_and_slide(pos)
 	

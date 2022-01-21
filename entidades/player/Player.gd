@@ -40,7 +40,7 @@ var can_idle_animation:= true
 
 ###Relacionado a veneno poison;poisoning
 var poisoning = 0
-var poisoning_timer = Timer.new()
+onready var poisoning_timer = Timer.new()
 
 
 
@@ -92,7 +92,12 @@ func attack():
 			if alvo_boss_guerra:
 				alvo_boss_guerra.receive_damage(damage)
 
-			
+func receive_damage_poisoning():
+	if hp - poisoning > 0:
+		hp -= poisoning;
+	else:
+		hp = 0;
+		dead();
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
 	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
@@ -105,8 +110,6 @@ func receive_damage(damage):
 			dead()
 		else:
 			hp -= damage
-			if poisoning > 0:
-				poisoning_timer.start()
 
 func set_stun_time_false():
 	stun_to_hitted = false;
@@ -115,12 +118,6 @@ func set_stun_time_false():
 func set_dash_time_false():
 	can_dash = true
 	dash_number = 0
-
-func set_poisoning_time_false():
-		if hp - 5 <= 0:
-			dead()
-		else:
-			hp -= 5
 
 
 ##Chamado quando o jogador morre
@@ -238,11 +235,21 @@ func timer_stamina():
 	else:
 		stamina += stamina_to_increase
 
+func timer_poisoning():
+	if poisoning > 0:
+		receive_damage_poisoning()
+
 func _ready():
 	timer.set_one_shot(true)
 	timer.set_wait_time(attack_delay)
 	timer.connect("timeout",self,"timer_completo")
 	add_child(timer)
+	
+	poisoning_timer.set_autostart(true)
+	poisoning_timer.set_one_shot(false)
+	poisoning_timer.set_wait_time(2)
+	poisoning_timer.connect("timeout",self,"timer_poisoning")
+	add_child(poisoning_timer)
 	
 	stun_timer.set_autostart(false)
 	stun_timer.set_one_shot(true)
@@ -262,10 +269,6 @@ func _ready():
 	stamina_timer.connect("timeout",self,"timer_stamina")
 	add_child(stamina_timer)
 	
-	poisoning_timer.set_autostart(false)
-	poisoning_timer.set_one_shot(false)
-	poisoning_timer.set_wait_time(1)
-	poisoning_timer.connect("timeout",self,"set_poisoning_time_false")
 func _physics_process(delta):
 	#Processa os movimentos e calcula a gravidade
 	input()
