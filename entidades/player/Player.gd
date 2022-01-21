@@ -117,9 +117,6 @@ func set_dash_time_false():
 	dash_number = 0
 
 func set_poisoning_time_false():
-	if not alvo_boss_peste:
-		poisoning = 0
-	else:
 		if hp - 5 <= 0:
 			dead()
 		else:
