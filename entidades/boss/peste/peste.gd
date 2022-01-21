@@ -58,7 +58,7 @@ func attack(attack):
 		timer.connect("timeout",self,"set_vulnerability")
 		timer.set_wait_time(2)
 		timer.start()
-		print_debug("ataque especial")
+		#print_debug("ataque especial")
 	pass
 
 func receive_damage(damage):
@@ -76,6 +76,7 @@ func receive_damage(damage):
 		timer.connect("timeout",self,"set_section_attacks",[state[0]])
 		timer.set_wait_time(intatts)
 		timer.start()
+		print_debug("hp")
 	else:
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"dead")
@@ -142,7 +143,7 @@ func _process(delta):
 		if (specialatt or attacking) and i == player and not player.stun_to_hitted and not reback:
 			player.receive_damage(damage)
 			player.poisoning = player.poisoning + 1
-			print_debug(player.poisoning)
+			#print_debug(player.poisoning)
 	
 	pos.y += GRV
 	if player and player.position.x - self.position.x < -12:

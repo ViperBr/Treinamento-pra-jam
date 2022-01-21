@@ -45,14 +45,6 @@ region = Rect2( 672, 0, 96, 48 )
 atlas = ExtResource( 1 )
 region = Rect2( 768, 0, 96, 48 )
 
-[sub_resource type="AtlasTexture" id=23]
-atlas = ExtResource( 1 )
-region = Rect2( 672, 0, 96, 48 )
-
-[sub_resource type="AtlasTexture" id=24]
-atlas = ExtResource( 1 )
-region = Rect2( 768, 0, 96, 48 )
-
 [sub_resource type="AtlasTexture" id=15]
 atlas = ExtResource( 4 )
 region = Rect2( 0, 0, 96, 48 )
@@ -85,6 +77,14 @@ region = Rect2( 192, 0, 96, 48 )
 atlas = ExtResource( 3 )
 region = Rect2( 288, 0, 96, 48 )
 
+[sub_resource type="AtlasTexture" id=23]
+atlas = ExtResource( 1 )
+region = Rect2( 672, 0, 96, 48 )
+
+[sub_resource type="AtlasTexture" id=24]
+atlas = ExtResource( 1 )
+region = Rect2( 768, 0, 96, 48 )
+
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
 "frames": [ SubResource( 5 ) ],
@@ -97,11 +97,6 @@ animations = [ {
 "name": "attack",
 "speed": 5.0
 }, {
-"frames": [ SubResource( 23 ), SubResource( 24 ) ],
-"loop": true,
-"name": "stun",
-"speed": 5.0
-}, {
 "frames": [ SubResource( 15 ), SubResource( 16 ), SubResource( 17 ), SubResource( 18 ) ],
 "loop": true,
 "name": "dash",
@@ -111,6 +106,11 @@ animations = [ {
 "loop": true,
 "name": "walk",
 "speed": 5.0
+}, {
+"frames": [ SubResource( 23 ), SubResource( 24 ) ],
+"loop": true,
+"name": "stun",
+"speed": 5.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=3]
@@ -119,7 +119,7 @@ extents = Vector2( 19, 20.1667 )
 [sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 13, 21.8333 )
 
-[node name="Guerra" type="KinematicBody2D"]
+[node name="Guerra" type="KinematicBody2D" groups=["boss_guerra"]]
 scale = Vector2( 2, 3 )
 script = ExtResource( 2 )
 __meta__ = {

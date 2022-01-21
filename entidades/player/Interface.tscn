@@ -11,17 +11,17 @@ __meta__ = {
 }
 
 [node name="progresso_stamina" type="ProgressBar" parent="."]
-margin_top = 54.0
-margin_right = 311.0
-margin_bottom = 68.0
+margin_top = 72.0
+margin_right = 300.0
+margin_bottom = 92.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="progresso_vida" type="ProgressBar" parent="."]
-margin_top = 19.0
-margin_right = 311.0
-margin_bottom = 33.0
+margin_top = 37.0
+margin_right = 300.0
+margin_bottom = 57.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -30,18 +30,18 @@ __meta__ = {
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 16.0
-margin_top = -546.0
+margin_top = -528.0
 margin_right = 105.0
-margin_bottom = -532.0
+margin_bottom = -514.0
 text = "Stamina:"
 
 [node name="vida" type="Label" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 16.0
-margin_top = -581.0
+margin_top = -563.0
 margin_right = 105.0
-margin_bottom = -567.0
+margin_bottom = -549.0
 text = "Vida:"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -51,8 +51,9 @@ __meta__ = {
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -250.0
+margin_top = 7.0
 margin_right = 250.0
-margin_bottom = 14.0
+margin_bottom = 27.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
