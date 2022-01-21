@@ -2,6 +2,7 @@ extends KinematicBody2D
 
 
 ##declarando variaveis
+var max_hp = 300
 var hp = 300
 var damage = 25
 
@@ -16,8 +17,6 @@ var direction = -1
 var initialpos = self.position
 var pos = Vector2(0,position.y);
 var attacking = false;
-var specialatt = false;
-var is_stunning = false;
 
 onready var weapon = $AreaWeapon.get_child(0)
 onready var player
@@ -51,42 +50,28 @@ func attack(attack):
 		weapon.position.x = 55 * direction
 		pos.x = 1000 * direction
 	elif attack == 1:
-		specialatt = true;
+		attacking = true;
 		sprite.play("attack")
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_vulnerability")
 		timer.set_wait_time(velatts*2)
 		timer.start()
-		print_debug("ataque especial")
+		#print_debug("ataque especial")
 	pass
 
 func receive_damage(damage):
-	print_debug("chega aqui no recieve")
-	if hp - damage < 0:
-		hp = 0;
-		sprite.speed_scale = 1.3
-		sprite.play("dead")
-		timer.disconnect("timeout", self,"set_section_attacks")
-		timer.connect("timeout",self,"dead")
-		timer.set_wait_time(1)
-		timer.start()
+	if hp - damage <= 0:
+		hp = 0
+		dead()
 	else:
-		hp -=  damage
-		specialatt = false
-		sprite.play("damage")
-		timer.connect("timeout",self,"set_section_attacks",[state[0]])
-		timer.set_wait_time(1)
-		timer.start()
-	pass
+		hp -= damage
+		print("levei dano")
 
 func dead():
-	
-	pass
-
+	print("morri")
 
 func set_vulnerability():
 	attacking = false;
-	is_stunning = true;
 	sprite.play("stun")
 	timer.disconnect("timeout", self,"set_vulnerability")
 	timer.connect("timeout",self,"set_section_attacks",[state[0]])
@@ -95,7 +80,7 @@ func set_vulnerability():
 	pass
 
 func set_section_attacks(att):
-	print_debug(att)
+	#print_debug(att)
 	if att == "att":
 		if hp < 200:
 			velatts = 3;
@@ -111,8 +96,6 @@ func set_section_attacks(att):
 			attack(1)
 	else:
 		attacking = false;
-		specialatt = false;
-		is_stunning = false;
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_section_attacks",[state[1]])
 		timer.set_wait_time(intatts)
@@ -124,13 +107,8 @@ func set_section_attacks(att):
 ##função chamada a cada frame
 func _process(delta):
 	
-	for i in get_slide_count():
-		print_debug(get_slide_collision(i))
-	
 	for i in $AreaWeapon.get_overlapping_bodies():
-		
-			
-		if (specialatt or attacking) and i == player and not player.stun_to_hitted:
+		if attacking and i == player and not player.stun_to_hitted:
 			player.receive_damage(damage)
 			continue
 	

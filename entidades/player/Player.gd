@@ -13,11 +13,12 @@ var attack_delay = 1
 var attacking = false
 
 ##propriedades de dash
-var max_dash_number = 2
+var max_dash_number = 1
 var dash_number = 0
 ##
 
 var direction = 1
+var input_direction = 0
 var flip_h:bool=false
 
 
@@ -29,6 +30,8 @@ var perda_de_stamina = 20
 var inimigo = []
 var alvo_flecha = null
 var alvo_boss_peste = null
+var alvo_boss_guerra = null
+var alvo_boss_fome = null
 
 ##Variáveis de timers
 var stun_to_hitted = false;
@@ -36,9 +39,6 @@ var can_attack:bool=true
 var can_dash:= true
 var can_walk_animation:= true
 var can_idle_animation:= true
-
-
-
 
 const SPEED = 50
 const MAX_SPEED = 200
@@ -57,13 +57,9 @@ onready var stun_timer = Timer.new()
 onready var dash_timer = Timer.new()
 onready var freeze_animation_timer = Timer.new()
 
-##Chamado quando o jogador pressiona a tecla de dar dash
+##Chamado quando aperta tecla de dash
 func dash():
-	if dash_number < max_dash_number + 1:
-		can_dash = true
-		dash_number += 1
-	else:
-		return
+	pass
 
 ##Chamado quando o jogador pressiona tecla de atacar
 func attack():
@@ -80,6 +76,12 @@ func attack():
 		
 			if alvo_flecha:
 				alvo_flecha.flecha_acertada()
+				
+			if alvo_boss_fome:
+				alvo_boss_fome.receive_damage(damage)
+			
+			if alvo_boss_guerra:
+				alvo_boss_guerra.receive_damage(damage)
 		
 
 func receive_poison_damage(damage):
@@ -106,9 +108,6 @@ func set_stun_time_false():
 	stun_to_hitted = false;
 	stun_player.play("normal")
 
-func set_dash_time_false():
-	can_dash = true
-
 ##Chamado quando o jogador morre
 func dead():
 	dead = true
@@ -129,10 +128,13 @@ func life_increase(increase):
 		hp = 100;
 	else:
 		hp += increase;
-
+		
+func pode_ativar_dash():
+	can_dash = true
+	dash_number = 0
+	
 ##Tudo relacionado aos controles e movimentação do jogador
 func input():
-	
 	#Movimentos de esquerda e direita no eixo x
 	if not dead:
 		if Input.is_action_pressed("left"):
@@ -162,22 +164,23 @@ func input():
 			if can_idle_animation:
 				animation.play("idle")
 			
-			
 		if Input.is_action_pressed("dash") and can_dash:
-			dash()
-			movement.x = (MAX_SPEED*3) * direction
-			dash_timer.start()
+			print("deu dash")
 			can_dash = false
-			pass
+			dash_number += 1
+			dash_timer.start()
 			
+		if dash_number > max_dash_number:
+			can_dash = false
+		
 	##Gravidade:
 	movement.y += GRAVITY
 	
 	##Limita a velocidade máxima do eixo X em ambos os lados
-	if not Input.is_action_pressed("dash") and can_dash:
+	if not dash():
 		movement.x = clamp(movement.x,-MAX_SPEED,MAX_SPEED)
 	else:
-		movement.x = clamp(movement.x,(-MAX_SPEED * 3),(MAX_SPEED* 3 ))
+		movement.x = clamp(movement.x,-MAX_SPEED*3,MAX_SPEED*3)
 	
 	##Faz com que a própria velocidade seja multiplicada pela inercia (para deslizar)
 	if is_on_floor():
@@ -206,23 +209,19 @@ func input():
 			get_node("distancia_de_hit/CollisionShape2D").position.x *=-1
 		flip_h = true
 		animation.flip_h = true
+		
 	
-	##Se estiver no chão, resete o número de dash para que consiga dar.
-	if is_on_floor():
-		dash_number = 0
 	
 func conectar_HUD():
 	interface.conectar_stamina(stamina)
 	interface.conectar_vida(hp)
 	if alvo_boss_peste:
-		interface.conectar_vida_boss(alvo_boss_peste.hp)
-	#for i in get_tree().get_nodes_in_group("boss_peste"):
-	#	interface.conectar_vida_boss(i.hp)
-	#for i in get_tree().get_nodes_in_group("boss_fome"):
-	#	interface.conectar_vida_boss(i.hp)
-	#for i in get_tree().get_nodes_in_group("boss_guerra"):
-	#	interface.conectar_vida_boss(i.hp)
-
+		interface.conectar_vida_boss(alvo_boss_peste.hp,alvo_boss_peste.max_hp)
+	if alvo_boss_guerra:
+		interface.conectar_vida_boss(alvo_boss_guerra.hp,alvo_boss_guerra.max_hp)
+	if alvo_boss_fome:
+		interface.conectar_vida_boss(alvo_boss_fome.hp,alvo_boss_fome.max_hp)
+		
 func timer_completo():
 	can_attack = true
 	attacking = false
@@ -260,8 +259,8 @@ func _ready():
 	
 	dash_timer.set_autostart(false)
 	dash_timer.set_one_shot(true)
-	dash_timer.set_wait_time(0.4)
-	dash_timer.connect("timeout",self,"set_dash_time_false")
+	dash_timer.set_wait_time(2)
+	dash_timer.connect("timeout",self,"pode_ativar_dash")
 	add_child(dash_timer)
 	
 	stamina_timer.set_autostart(true)
@@ -269,7 +268,6 @@ func _ready():
 	stamina_timer.set_wait_time(0.5)
 	stamina_timer.connect("timeout",self,"timer_stamina")
 	add_child(stamina_timer)
-	
 	
 
 func _physics_process(delta):
@@ -283,6 +281,10 @@ func _on_distancia_de_hit_body_entered(body):
 		inimigo.append(body)
 	if body.is_in_group("boss_peste"):
 		alvo_boss_peste = body
+	if body.is_in_group("boss_guerra"):
+		alvo_boss_guerra = body
+	if body.is_in_group("boss_fome"):
+		alvo_boss_fome = body
 
 ##Se o inimigo entrou na área mas saiu, seu alvo não é mais esse
 func _on_distancia_de_hit_body_exited(body):
@@ -292,6 +294,11 @@ func _on_distancia_de_hit_body_exited(body):
 		alvo_flecha = null
 	if alvo_boss_peste == body:
 		alvo_boss_peste = null
+	if alvo_boss_guerra == body:
+		alvo_boss_guerra = null
+	if alvo_boss_fome == body:
+		alvo_boss_fome = null
+	
 
 func _on_distancia_de_hit_area_shape_entered(area_rid, area, area_shape_index, local_shape_index):
 	if area.is_in_group("flecha"):

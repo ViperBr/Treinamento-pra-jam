@@ -2,6 +2,7 @@ extends KinematicBody2D
 
 
 ##declarando variaveis
+var max_hp = 500
 var hp = 500
 var damage = 5
 
