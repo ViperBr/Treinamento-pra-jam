@@ -22,9 +22,11 @@ var flip_h:bool=false
 var stamina_to_increase = 5
 var perda_de_stamina = 20
 
-var inimigo = []
 
+##Todos os alvos definidos capturados por detecções
+var inimigo = []
 var alvo_flecha = null
+var alvo_boss_peste = null
 
 ##Variáveis de timers
 var stun_to_hitted = false;
@@ -71,6 +73,10 @@ func attack():
 		
 		if alvo_flecha:
 			alvo_flecha.flecha_acertada()
+			
+		if alvo_boss_peste:
+			alvo_boss_peste.reback = true
+			print("mudei o reback dele")
 			
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
@@ -236,6 +242,8 @@ func _physics_process(delta):
 func _on_distancia_de_hit_body_entered(body):
 	if body.is_in_group("enemy"):
 		inimigo.append(body)
+	if body.is_in_group("boss_peste"):
+		alvo_boss_peste = body
 
 ##Se o inimigo entrou na área mas saiu, seu alvo não é mais esse
 func _on_distancia_de_hit_body_exited(body):
@@ -243,11 +251,16 @@ func _on_distancia_de_hit_body_exited(body):
 		inimigo.erase(body)
 	if alvo_flecha == body:
 		alvo_flecha = null
+	if alvo_boss_peste == body:
+		alvo_boss_peste = null
 
 func _on_distancia_de_hit_area_shape_entered(area_rid, area, area_shape_index, local_shape_index):
 	if area.is_in_group("flecha"):
 		alvo_flecha = area
+	
 
 func _on_distancia_de_hit_area_exited(area):
 	if area == alvo_flecha:
 		alvo_flecha = null
+	
+		

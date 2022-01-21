@@ -66,10 +66,8 @@ func receive_damage(damage):
 	pass
 
 func dead():
-	
 	pass
-
-
+	
 func set_vulnerability():
 	attacking = false;
 	sprite.play("stun")
@@ -112,7 +110,7 @@ func _process(delta):
 	if specialatt and not reback and weapon.position.x < 400 and weapon.position.x > -400:
 		weapon.position.x = weapon.position.x + 2 * direction;
 	elif specialatt and reback:
-		print_debug(reback)
+		print_debug("Valor do reback é:" + reback)
 		weapon.position.x = weapon.position.x - 2 * direction;
 	
 	for i in $AreaWeapon.get_overlapping_bodies():
