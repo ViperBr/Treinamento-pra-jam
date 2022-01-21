@@ -7,8 +7,13 @@ var stamina = 100
 var movement:Vector2
 var inertia:float = 0.9
 var dead := false
-var can_attack:bool=true
+
 var attack_delay = 0.3
+
+##propriedades de dash
+var max_dash_number = 2
+var dash_number = 0
+##
 
 var direction = 1
 var flip_h:bool=false
@@ -21,7 +26,11 @@ var inimigo = []
 
 var alvo_flecha = null
 
+##Variáveis de timers
 var stun_to_hitted = false;
+var can_attack:bool=true
+var can_dash:= true
+var can_walk_animation:= true
 
 const SPEED = 50
 const MAX_SPEED = 200
@@ -30,19 +39,32 @@ const GRAVITY = 10
 
 ##Referenciando nós
 onready var interface = $CanvasLayer/Interface
-
+onready var animation = $AnimatedSprite
+onready var stun_player = $stun_player
 ##Criando nós
 onready var timer = Timer.new()
 onready var stamina_timer = Timer.new()
 onready var stun_timer = Timer.new()
+onready var dash_timer = Timer.new()
+onready var freeze_animation_timer = Timer.new()
+
+##Chamado quando o jogador pressiona a tecla de dar dash
+func dash():
+	if dash_number < max_dash_number + 1:
+		can_dash = true
+		dash_number += 1
+		print_debug("deu dash")
+	else:
+		return
 
 ##Chamado quando o jogador pressiona tecla de atacar
 func attack():
 	if stamina - perda_de_stamina <= 0:
 		return
 	else:
-		print("atacou")
+		animation.play("attack")
 		stamina -= perda_de_stamina
+		
 		if inimigo:
 			for enemy in inimigo:
 				enemy.receive_damage(damage)
@@ -55,6 +77,7 @@ func receive_damage(damage):
 	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
 	if stun_to_hitted == false:
 		stun_to_hitted = true;
+		stun_player.play("stun")
 		stun_timer.start()
 		if hp - damage <= 0:
 			hp = 0
@@ -64,10 +87,15 @@ func receive_damage(damage):
 
 func set_stun_time_false():
 	stun_to_hitted = false;
+	stun_player.play("normal")
+
+func set_dash_time_false():
+	can_dash = true
 
 ##Chamado quando o jogador morre
 func dead():
 	dead = true
+	animation.play("dead")
 
 ##Chamado quando o jogador encosta em um coletável de stamina
 func stamina_increase(increase):
@@ -91,8 +119,12 @@ func input():
 	if not dead:
 		if Input.is_action_pressed("left"):
 			movement.x -= SPEED
+			if can_walk_animation:
+				animation.play("walk")
 		if Input.is_action_pressed("right"):
 			movement.x += SPEED
+			if can_walk_animation:
+				animation.play("walk")
 		
 	#Caso esteja no chão e pressione para cima, pule.
 		if Input.is_action_just_pressed("up") and is_on_floor():
@@ -102,15 +134,26 @@ func input():
 			movement.y *= inertia - 0.1
 			
 		if Input.is_action_pressed("attack") and can_attack:
+			can_walk_animation = false
 			attack()
 			can_attack = false
 			timer.start()
+			
+		if Input.is_action_pressed("dash") and can_dash:
+			dash()
+			movement.x = SPEED * direction
+			dash_timer.start()
+			can_dash = false
+			pass
 			
 	##Gravidade:
 	movement.y += GRAVITY
 	
 	##Limita a velocidade máxima do eixo X em ambos os lados
-	movement.x = clamp(movement.x,-MAX_SPEED,MAX_SPEED)
+	if not Input.is_action_pressed("dash") and can_dash:
+		movement.x = clamp(movement.x,-MAX_SPEED,MAX_SPEED)
+	else:
+		movement.x = clamp(movement.x,(-MAX_SPEED * 3),(MAX_SPEED* 3 ))
 	
 	##Faz com que a própria velocidade seja multiplicada pela inercia (para deslizar)
 	if is_on_floor():
@@ -132,10 +175,17 @@ func input():
 		if flip_h:
 			get_node("distancia_de_hit/CollisionShape2D").position.x *=-1
 		flip_h = false
+		animation.flip_h = false
+		
 	if direction < 0:
 		if not flip_h:
 			get_node("distancia_de_hit/CollisionShape2D").position.x *=-1
 		flip_h = true
+		animation.flip_h = true
+	
+	##Se estiver no chão, resete o número de dash para que consiga dar.
+	if is_on_floor():
+		dash_number = 0
 	
 func conectar_HUD():
 	interface.conectar_stamina(stamina)
@@ -143,6 +193,7 @@ func conectar_HUD():
 
 func timer_completo():
 	can_attack = true
+	can_walk_animation = true
 	
 func timer_stamina():
 	if stamina + stamina_to_increase > 100:
@@ -162,12 +213,18 @@ func _ready():
 	stun_timer.connect("timeout",self,"set_stun_time_false")
 	add_child(stun_timer)
 	
+	dash_timer.set_autostart(false)
+	dash_timer.set_one_shot(true)
+	dash_timer.set_wait_time(1)
+	dash_timer.connect("timeout",self,"set_dash_time_false")
+	add_child(dash_timer)
+	
 	stamina_timer.set_autostart(true)
 	stamina_timer.set_one_shot(false)
-	stamina_timer.set_wait_time(1)
+	stamina_timer.set_wait_time(0.5)
 	stamina_timer.connect("timeout",self,"timer_stamina")
 	add_child(stamina_timer)
-
+	
 func _physics_process(delta):
 	#Processa os movimentos e calcula a gravidade
 	input()
@@ -177,12 +234,6 @@ func _physics_process(delta):
 func _on_distancia_de_hit_body_entered(body):
 	if body.is_in_group("enemy"):
 		inimigo.append(body)
-	
-	
-	#if body.is_in_group("flecha"):
-	#	print("encontrou flecha")
-	#	alvo_flecha = body
-	
 
 ##Se o inimigo entrou na área mas saiu, seu alvo não é mais esse
 func _on_distancia_de_hit_body_exited(body):
@@ -194,7 +245,6 @@ func _on_distancia_de_hit_body_exited(body):
 func _on_distancia_de_hit_area_shape_entered(area_rid, area, area_shape_index, local_shape_index):
 	if area.is_in_group("flecha"):
 		alvo_flecha = area
-
 
 func _on_distancia_de_hit_area_exited(area):
 	if area == alvo_flecha:
