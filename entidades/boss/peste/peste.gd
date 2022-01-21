@@ -3,19 +3,21 @@ extends KinematicBody2D
 
 ##declarando variaveis
 var hp = 300
-var damage = 25
+var damage = 5
 
 const GRV = 25
 const SPD = 100
 
 var atts = 0;
-var velatts = 0.3;
+var velatts = 1;
 var intatts = 2;
 var state =  ["idle","att"]
 var direction = -1
 var initialpos = self.position
 var pos = Vector2(0,position.y);
 var attacking = false;
+var specialatt = false;
+var reback = false;
 
 onready var weapon = $AreaWeapon.get_child(0)
 onready var player
@@ -46,11 +48,12 @@ func attack(attack):
 		timer.connect("timeout",self,"set_section_attacks",[state[0]])
 		timer.set_wait_time(velatts)
 		timer.start()
-		weapon.position.x = 55 * direction
-		pos.x = 1000 * direction
+		weapon.position.x = 25 * direction
+		pos.x = 200 * direction
 	elif attack == 1:
-		attacking = true;
+		specialatt = true;
 		sprite.play("attack")
+		weapon.get_child(0).play("att")
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_vulnerability")
 		timer.set_wait_time(velatts*2)
@@ -59,7 +62,7 @@ func attack(attack):
 	pass
 
 func receive_damage(damage):
-	
+	print_debug("Ai recebi dano")
 	pass
 
 func dead():
@@ -77,7 +80,7 @@ func set_vulnerability():
 	pass
 
 func set_section_attacks(att):
-	print_debug(att)
+	
 	if att == "att":
 		if hp < 200:
 			velatts = 3;
@@ -93,20 +96,32 @@ func set_section_attacks(att):
 			attack(1)
 	else:
 		attacking = false;
+		specialatt = false;
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_section_attacks",[state[1]])
 		timer.set_wait_time(intatts)
 		timer.start()
+		weapon.get_child(0).play("default")
+		weapon.position.x = 0;
 		pos.x = 0;
 		sprite.play("idle")
 	pass
 
 ##função chamada a cada frame
 func _process(delta):
+	if specialatt and not reback and weapon.position.x < 400 and weapon.position.x > -400:
+		weapon.position.x = weapon.position.x + 2 * direction;
+	elif specialatt and reback:
+		print_debug(reback)
+		weapon.position.x = weapon.position.x - 2 * direction;
 	
 	for i in $AreaWeapon.get_overlapping_bodies():
-		if attacking and i == player and not player.stun_to_hitted:
+		if specialatt and reback and i == self:
+			receive_damage(damage)
+			set_section_attacks(state[0])
+		if (specialatt or attacking) and i == player and not player.stun_to_hitted:
 			player.receive_damage(damage)
+			player.poisoning = true
 			continue
 	
 	pos.y += GRV

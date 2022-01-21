@@ -81,10 +81,12 @@ dash={
 
 [layer_names]
 
+2d_render/layer_9="boss"
 2d_physics/layer_1="Chão"
 2d_physics/layer_5="Jogador"
 2d_physics/layer_6="Chão"
 2d_physics/layer_7="Flecha"
+2d_physics/layer_9="boss"
 
 [physics]
 
