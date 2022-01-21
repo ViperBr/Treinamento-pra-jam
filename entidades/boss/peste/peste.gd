@@ -71,7 +71,6 @@ func attack(attack):
 
 func receive_damage(damage_rec):
 	if hp - damage_rec >= 0:
-		print_debug("recebi dano!")
 		hp -= damage_rec
 		attacking = false;
 		specialatt = false;
@@ -83,7 +82,6 @@ func receive_damage(damage_rec):
 		timer.connect("timeout",self,"set_section_attacks",[state[0]])
 		timer.set_wait_time(intatts)
 		timer.start()
-		print_debug("hp")
 	else:
 		hp = 0;
 		timer.disconnect("timeout", self,"set_section_attacks")
@@ -147,7 +145,6 @@ func _process(delta):
 		
 		for i in weapon_collision.get_overlapping_bodies():
 			if specialatt and reback and weapon.position.x - sprite.position.x > -20 and weapon.position.x - sprite.position.x < 20 and i == self :
-				print_debug("colidiu")
 				receive_damage(25)
 			
 			if specialatt and i == player and player.attacking and not reback:
