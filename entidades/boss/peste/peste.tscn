@@ -13,17 +13,17 @@ flags = 4
 atlas = ExtResource( 1 )
 region = Rect2( 0, 0, 64, 64 )
 
+[sub_resource type="AtlasTexture" id=7]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 64, 64 )
+
 [sub_resource type="AtlasTexture" id=8]
 flags = 4
 atlas = ExtResource( 1 )
 region = Rect2( 0, 0, 64, 64 )
 
 [sub_resource type="AtlasTexture" id=9]
-flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 0, 0, 64, 64 )
-
-[sub_resource type="AtlasTexture" id=7]
 flags = 4
 atlas = ExtResource( 1 )
 region = Rect2( 0, 0, 64, 64 )
@@ -40,6 +40,11 @@ animations = [ {
 "name": "attack",
 "speed": 5.0
 }, {
+"frames": [ SubResource( 7 ) ],
+"loop": true,
+"name": "stun",
+"speed": 5.0
+}, {
 "frames": [ SubResource( 8 ) ],
 "loop": true,
 "name": "dash",
@@ -49,18 +54,13 @@ animations = [ {
 "loop": true,
 "name": "walk",
 "speed": 5.0
-}, {
-"frames": [ SubResource( 7 ) ],
-"loop": true,
-"name": "stun",
-"speed": 5.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 19, 20.1667 )
 
 [sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 13, 7.24998 )
+extents = Vector2( 13, 11.905 )
 
 [sub_resource type="AtlasTexture" id=10]
 flags = 4
@@ -87,8 +87,8 @@ animations = [ {
 
 [node name="Peste" type="KinematicBody2D" groups=["boss_peste"]]
 scale = Vector2( 2, 3 )
-collision_layer = 257
-collision_mask = 257
+collision_layer = 385
+collision_mask = 385
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_group_": true
@@ -105,12 +105,12 @@ playing = true
 [node name="CollisionSprite" type="CollisionShape2D" parent="."]
 shape = SubResource( 3 )
 
-[node name="AreaWeapon" type="Area2D" parent="."]
+[node name="AreaWeapon" type="Area2D" parent="." groups=["boss_peste"]]
 position = Vector2( -1.017, 0 )
-collision_layer = 272
-collision_mask = 272
+collision_layer = 144
+collision_mask = 144
 
-[node name="weapon" type="CollisionShape2D" parent="AreaWeapon"]
+[node name="weapon" type="CollisionShape2D" parent="AreaWeapon" groups=["boss_peste"]]
 position = Vector2( 0, 8 )
 shape = SubResource( 4 )
 

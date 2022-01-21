@@ -7,8 +7,10 @@ var stamina = 100
 var movement:Vector2
 var inertia:float = 0.9
 var dead := false
+var poisoning = false;
 
 var attack_delay = 0.3
+var attacking = false
 
 ##propriedades de dash
 var max_dash_number = 2
@@ -66,7 +68,7 @@ func attack():
 	else:
 		animation.play("attack")
 		stamina -= perda_de_stamina
-		
+		attacking = true
 		if inimigo:
 			for enemy in inimigo:
 				enemy.receive_damage(damage)
@@ -74,10 +76,13 @@ func attack():
 		if alvo_flecha:
 			alvo_flecha.flecha_acertada()
 			
-		if alvo_boss_peste:
-			alvo_boss_peste.reback = true
-			print("mudei o reback dele")
-			
+#		if alvo_boss_peste:
+#			print(alvo_boss_peste)
+#			alvo_boss_peste = get_node("/root/Main/Peste")
+#			if alvo_boss_peste.specialatt == true:
+#				alvo_boss_peste.reback = true
+#				print("mudei o reback dele")
+	
 ##Chamado quando o jogador recebe dano por um terceiro
 func receive_damage(damage):
 	##Se o dano dado já passa de 0 então mate-o, caso contrário só subtraia
@@ -201,6 +206,7 @@ func conectar_HUD():
 
 func timer_completo():
 	can_attack = true
+	attacking = false
 	can_walk_animation = true
 	
 func timer_stamina():

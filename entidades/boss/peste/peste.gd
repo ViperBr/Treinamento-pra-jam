@@ -95,6 +95,7 @@ func set_section_attacks(att):
 	else:
 		attacking = false;
 		specialatt = false;
+		reback = false;
 		timer.disconnect("timeout", self,"set_section_attacks")
 		timer.connect("timeout",self,"set_section_attacks",[state[1]])
 		timer.set_wait_time(intatts)
@@ -110,14 +111,16 @@ func _process(delta):
 	if specialatt and not reback and weapon.position.x < 400 and weapon.position.x > -400:
 		weapon.position.x = weapon.position.x + 2 * direction;
 	elif specialatt and reback:
-		print_debug("Valor do reback é:" + reback)
-		weapon.position.x = weapon.position.x - 2 * direction;
+		print_debug("Valor do reback é: ", reback)
+		weapon.position.x = weapon.position.x - 6 * direction;
 	
 	for i in $AreaWeapon.get_overlapping_bodies():
 		if specialatt and reback and i == self:
 			receive_damage(damage)
 			set_section_attacks(state[0])
-		if (specialatt or attacking) and i == player and not player.stun_to_hitted:
+		if specialatt and i == player and player.attacking and not reback:
+			reback = true
+		if (specialatt or attacking) and i == player and not player.stun_to_hitted and not reback:
 			player.receive_damage(damage)
 			player.poisoning = true
 			continue
